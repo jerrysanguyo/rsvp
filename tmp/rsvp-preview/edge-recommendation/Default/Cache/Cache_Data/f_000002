@@ -1,0 +1,544 @@
+import { createHotContext as __vite__createHotContext } from "/@vite/client";import.meta.hot = __vite__createHotContext("/resources/js/app.jsx");import __vite__cjsImport0_react_jsxDevRuntime from "/node_modules/.vite/deps/react_jsx-dev-runtime.js?v=33f931ab"; const jsxDEV = __vite__cjsImport0_react_jsxDevRuntime["jsxDEV"];
+var _s = $RefreshSig$(), _s2 = $RefreshSig$(), _s3 = $RefreshSig$();
+import "/resources/js/bootstrap.js";
+import __vite__cjsImport2_react from "/node_modules/.vite/deps/react.js?v=33f931ab"; const React = __vite__cjsImport2_react.__esModule ? __vite__cjsImport2_react.default : __vite__cjsImport2_react; const useEffect = __vite__cjsImport2_react["useEffect"]; const useState = __vite__cjsImport2_react["useState"];
+import __vite__cjsImport3_reactDom_client from "/node_modules/.vite/deps/react-dom_client.js?v=d764a879"; const createRoot = __vite__cjsImport3_reactDom_client["createRoot"];
+const Sparkle = ({ className = "" }) => /* @__PURE__ */ jsxDEV("span", { className: `sparkle ${className}`, "aria-hidden": "true", children: "✦" }, void 0, false, {
+  fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+  lineNumber: 5,
+  columnNumber: 41
+}, this);
+_c = Sparkle;
+const GuestIcon = () => /* @__PURE__ */ jsxDEV("svg", { viewBox: "0 0 24 24", "aria-hidden": "true", children: /* @__PURE__ */ jsxDEV("path", { d: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" }, void 0, false, {
+  fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+  lineNumber: 9,
+  columnNumber: 9
+}, this) }, void 0, false, {
+  fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+  lineNumber: 8,
+  columnNumber: 1
+}, this);
+_c2 = GuestIcon;
+function RsvpForm() {
+  _s();
+  const [attending, setAttending] = useState("yes");
+  const [guests, setGuests] = useState([""]);
+  const [submitted, setSubmitted] = useState(false);
+  const addGuest = () => setGuests((current) => [...current, ""]);
+  const removeGuest = (index) => setGuests((current) => current.filter((_, i) => i !== index));
+  const updateGuest = (index, value) => setGuests((current) => current.map((guest, i) => i === index ? value : guest));
+  const chooseAttendance = (value) => {
+    setAttending(value);
+    if (value === "no") setGuests((current) => [current[0] ?? ""]);
+  };
+  const submitPreview = (event) => {
+    event.preventDefault();
+    if (!guests[0].trim()) return;
+    setSubmitted(true);
+  };
+  if (submitted) {
+    const guestCount = guests.filter((name) => name.trim()).length;
+    return /* @__PURE__ */ jsxDEV("div", { className: "success-card", role: "status", children: [
+      /* @__PURE__ */ jsxDEV("div", { className: "success-crown", children: "♛" }, void 0, false, {
+        fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+        lineNumber: 37,
+        columnNumber: 17
+      }, this),
+      /* @__PURE__ */ jsxDEV("p", { className: "eyebrow", children: "Your reply was received" }, void 0, false, {
+        fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+        lineNumber: 38,
+        columnNumber: 17
+      }, this),
+      /* @__PURE__ */ jsxDEV("h2", { children: attending === "yes" ? "See you in Fairytale Land!" : "Thank you for letting us know" }, void 0, false, {
+        fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+        lineNumber: 39,
+        columnNumber: 17
+      }, this),
+      /* @__PURE__ */ jsxDEV("p", { children: attending === "yes" ? `We saved ${guestCount} guest ${guestCount === 1 ? "name" : "names"} for Gaia’s celebration.` : "Gaia will miss you, but we truly appreciate your response." }, void 0, false, {
+        fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+        lineNumber: 40,
+        columnNumber: 17
+      }, this),
+      /* @__PURE__ */ jsxDEV("button", { className: "secondary-button", type: "button", onClick: () => setSubmitted(false), children: "Edit my response" }, void 0, false, {
+        fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+        lineNumber: 45,
+        columnNumber: 17
+      }, this)
+    ] }, void 0, true, {
+      fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+      lineNumber: 36,
+      columnNumber: 7
+    }, this);
+  }
+  return /* @__PURE__ */ jsxDEV("form", { className: "rsvp-form", onSubmit: submitPreview, children: [
+    /* @__PURE__ */ jsxDEV("div", { className: "form-heading", children: [
+      /* @__PURE__ */ jsxDEV("div", { className: "mini-crown", "aria-hidden": "true", children: "♛" }, void 0, false, {
+        fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+        lineNumber: 53,
+        columnNumber: 17
+      }, this),
+      /* @__PURE__ */ jsxDEV("p", { className: "eyebrow", children: "The royal invitation awaits" }, void 0, false, {
+        fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+        lineNumber: 54,
+        columnNumber: 17
+      }, this),
+      /* @__PURE__ */ jsxDEV("h1", { children: "Will you join the magic?" }, void 0, false, {
+        fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+        lineNumber: 55,
+        columnNumber: 17
+      }, this),
+      /* @__PURE__ */ jsxDEV("p", { className: "intro", children: "Kindly send your response on or before December 20, 2026." }, void 0, false, {
+        fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+        lineNumber: 56,
+        columnNumber: 17
+      }, this)
+    ] }, void 0, true, {
+      fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+      lineNumber: 52,
+      columnNumber: 13
+    }, this),
+    /* @__PURE__ */ jsxDEV("fieldset", { className: "attendance-fieldset", children: [
+      /* @__PURE__ */ jsxDEV("legend", { children: "Will you be attending?" }, void 0, false, {
+        fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+        lineNumber: 60,
+        columnNumber: 17
+      }, this),
+      /* @__PURE__ */ jsxDEV("div", { className: "attendance-options", children: [
+        /* @__PURE__ */ jsxDEV("button", { className: `attendance-card ${attending === "yes" ? "selected" : ""}`, type: "button", "aria-pressed": attending === "yes", onClick: () => chooseAttendance("yes"), children: [
+          /* @__PURE__ */ jsxDEV("span", { className: "choice-icon", children: "♥" }, void 0, false, {
+            fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+            lineNumber: 63,
+            columnNumber: 25
+          }, this),
+          /* @__PURE__ */ jsxDEV("span", { children: [
+            /* @__PURE__ */ jsxDEV("strong", { children: "Joyfully accepts" }, void 0, false, {
+              fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+              lineNumber: 64,
+              columnNumber: 31
+            }, this),
+            /* @__PURE__ */ jsxDEV("small", { children: "We’ll be there!" }, void 0, false, {
+              fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+              lineNumber: 64,
+              columnNumber: 64
+            }, this)
+          ] }, void 0, true, {
+            fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+            lineNumber: 64,
+            columnNumber: 25
+          }, this),
+          /* @__PURE__ */ jsxDEV("span", { className: "radio-mark" }, void 0, false, {
+            fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+            lineNumber: 65,
+            columnNumber: 25
+          }, this)
+        ] }, void 0, true, {
+          fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+          lineNumber: 62,
+          columnNumber: 21
+        }, this),
+        /* @__PURE__ */ jsxDEV("button", { className: `attendance-card ${attending === "no" ? "selected" : ""}`, type: "button", "aria-pressed": attending === "no", onClick: () => chooseAttendance("no"), children: [
+          /* @__PURE__ */ jsxDEV("span", { className: "choice-icon", children: "✦" }, void 0, false, {
+            fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+            lineNumber: 68,
+            columnNumber: 25
+          }, this),
+          /* @__PURE__ */ jsxDEV("span", { children: [
+            /* @__PURE__ */ jsxDEV("strong", { children: "Sadly declines" }, void 0, false, {
+              fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+              lineNumber: 69,
+              columnNumber: 31
+            }, this),
+            /* @__PURE__ */ jsxDEV("small", { children: "We can’t make it" }, void 0, false, {
+              fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+              lineNumber: 69,
+              columnNumber: 62
+            }, this)
+          ] }, void 0, true, {
+            fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+            lineNumber: 69,
+            columnNumber: 25
+          }, this),
+          /* @__PURE__ */ jsxDEV("span", { className: "radio-mark" }, void 0, false, {
+            fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+            lineNumber: 70,
+            columnNumber: 25
+          }, this)
+        ] }, void 0, true, {
+          fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+          lineNumber: 67,
+          columnNumber: 21
+        }, this)
+      ] }, void 0, true, {
+        fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+        lineNumber: 61,
+        columnNumber: 17
+      }, this)
+    ] }, void 0, true, {
+      fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+      lineNumber: 59,
+      columnNumber: 13
+    }, this),
+    /* @__PURE__ */ jsxDEV("div", { className: "guest-section", children: [
+      /* @__PURE__ */ jsxDEV("div", { className: "section-label", children: [
+        /* @__PURE__ */ jsxDEV("span", { className: "label-icon", children: /* @__PURE__ */ jsxDEV(GuestIcon, {}, void 0, false, {
+          fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+          lineNumber: 77,
+          columnNumber: 50
+        }, this) }, void 0, false, {
+          fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+          lineNumber: 77,
+          columnNumber: 21
+        }, this),
+        /* @__PURE__ */ jsxDEV("span", { children: [
+          /* @__PURE__ */ jsxDEV("strong", { children: attending === "yes" ? "Who’s coming?" : "Your full name" }, void 0, false, {
+            fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+            lineNumber: 79,
+            columnNumber: 25
+          }, this),
+          /* @__PURE__ */ jsxDEV("small", { children: attending === "yes" ? "Please list each guest’s full name." : "Please tell us who is responding." }, void 0, false, {
+            fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+            lineNumber: 80,
+            columnNumber: 25
+          }, this)
+        ] }, void 0, true, {
+          fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+          lineNumber: 78,
+          columnNumber: 21
+        }, this)
+      ] }, void 0, true, {
+        fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+        lineNumber: 76,
+        columnNumber: 17
+      }, this),
+      /* @__PURE__ */ jsxDEV("div", { className: "guest-list", children: guests.map(
+        (guest, index) => /* @__PURE__ */ jsxDEV("div", { className: "guest-row", children: [
+          /* @__PURE__ */ jsxDEV("label", { htmlFor: `guest-${index}`, children: index === 0 ? "Full name" : `Guest ${index + 1}` }, void 0, false, {
+            fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+            lineNumber: 87,
+            columnNumber: 29
+          }, this),
+          /* @__PURE__ */ jsxDEV("div", { className: "input-wrap", children: [
+            /* @__PURE__ */ jsxDEV("input", { id: `guest-${index}`, type: "text", value: guest, placeholder: index === 0 ? "e.g. Maria Santos" : "Enter guest’s full name", onChange: (event) => updateGuest(index, event.target.value), required: true }, void 0, false, {
+              fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+              lineNumber: 89,
+              columnNumber: 33
+            }, this),
+            index > 0 && /* @__PURE__ */ jsxDEV("button", { type: "button", className: "remove-guest", onClick: () => removeGuest(index), "aria-label": `Remove guest ${index + 1}`, children: "×" }, void 0, false, {
+              fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+              lineNumber: 90,
+              columnNumber: 47
+            }, this)
+          ] }, void 0, true, {
+            fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+            lineNumber: 88,
+            columnNumber: 29
+          }, this)
+        ] }, index, true, {
+          fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+          lineNumber: 86,
+          columnNumber: 11
+        }, this)
+      ) }, void 0, false, {
+        fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+        lineNumber: 84,
+        columnNumber: 17
+      }, this),
+      attending === "yes" && guests.length < 8 && /* @__PURE__ */ jsxDEV("button", { className: "add-guest", type: "button", onClick: addGuest, children: [
+        /* @__PURE__ */ jsxDEV("span", { children: "＋" }, void 0, false, {
+          fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+          lineNumber: 97,
+          columnNumber: 72
+        }, this),
+        " Add another guest"
+      ] }, void 0, true, {
+        fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+        lineNumber: 97,
+        columnNumber: 9
+      }, this)
+    ] }, void 0, true, {
+      fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+      lineNumber: 75,
+      columnNumber: 13
+    }, this),
+    /* @__PURE__ */ jsxDEV("button", { className: "submit-button", type: "submit", children: [
+      /* @__PURE__ */ jsxDEV("span", { children: attending === "yes" ? "Send our royal RSVP" : "Send my response" }, void 0, false, {
+        fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+        lineNumber: 102,
+        columnNumber: 17
+      }, this),
+      /* @__PURE__ */ jsxDEV("span", { "aria-hidden": "true", children: "→" }, void 0, false, {
+        fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+        lineNumber: 103,
+        columnNumber: 17
+      }, this)
+    ] }, void 0, true, {
+      fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+      lineNumber: 101,
+      columnNumber: 13
+    }, this),
+    /* @__PURE__ */ jsxDEV("p", { className: "privacy-note", children: "Your response will only be used for this celebration." }, void 0, false, {
+      fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+      lineNumber: 105,
+      columnNumber: 13
+    }, this)
+  ] }, void 0, true, {
+    fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+    lineNumber: 51,
+    columnNumber: 5
+  }, this);
+}
+_s(RsvpForm, "bHQPBGPTZwiJ4seKq6XlaWbCVhQ=");
+_c3 = RsvpForm;
+function InvitationModal({ onClose }) {
+  _s2();
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") onClose();
+    };
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [onClose]);
+  return /* @__PURE__ */ jsxDEV("div", { className: "invitation-modal", role: "dialog", "aria-modal": "true", "aria-label": "Full birthday invitation", onClick: onClose, children: [
+    /* @__PURE__ */ jsxDEV("div", { className: "modal-toolbar", children: [
+      /* @__PURE__ */ jsxDEV("span", { children: "Gaia’s royal invitation" }, void 0, false, {
+        fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+        lineNumber: 129,
+        columnNumber: 17
+      }, this),
+      /* @__PURE__ */ jsxDEV("button", { type: "button", onClick: onClose, "aria-label": "Close full invitation", children: "×" }, void 0, false, {
+        fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+        lineNumber: 130,
+        columnNumber: 17
+      }, this)
+    ] }, void 0, true, {
+      fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+      lineNumber: 128,
+      columnNumber: 13
+    }, this),
+    /* @__PURE__ */ jsxDEV("div", { className: "modal-image-wrap", onClick: (event) => event.stopPropagation(), children: /* @__PURE__ */ jsxDEV("img", { src: "/images/rsvp_gaia.png", alt: "Full invitation for Gaia’s third birthday at Jollibee Fairytale Land" }, void 0, false, {
+      fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+      lineNumber: 133,
+      columnNumber: 17
+    }, this) }, void 0, false, {
+      fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+      lineNumber: 132,
+      columnNumber: 13
+    }, this),
+    /* @__PURE__ */ jsxDEV("p", { className: "zoom-hint", children: "Pinch or double-tap to take a closer look" }, void 0, false, {
+      fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+      lineNumber: 135,
+      columnNumber: 13
+    }, this)
+  ] }, void 0, true, {
+    fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+    lineNumber: 127,
+    columnNumber: 5
+  }, this);
+}
+_s2(InvitationModal, "OD7bBpZva5O2jO+Puf00hKivP7c=");
+_c4 = InvitationModal;
+function App() {
+  _s3();
+  const [showInvitation, setShowInvitation] = useState(false);
+  return /* @__PURE__ */ jsxDEV("main", { className: "page-shell", children: [
+    /* @__PURE__ */ jsxDEV("div", { className: "background-cloud cloud-one" }, void 0, false, {
+      fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+      lineNumber: 145,
+      columnNumber: 13
+    }, this),
+    /* @__PURE__ */ jsxDEV("div", { className: "background-cloud cloud-two" }, void 0, false, {
+      fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+      lineNumber: 146,
+      columnNumber: 13
+    }, this),
+    /* @__PURE__ */ jsxDEV(Sparkle, { className: "sparkle-one" }, void 0, false, {
+      fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+      lineNumber: 147,
+      columnNumber: 13
+    }, this),
+    /* @__PURE__ */ jsxDEV(Sparkle, { className: "sparkle-two" }, void 0, false, {
+      fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+      lineNumber: 148,
+      columnNumber: 13
+    }, this),
+    /* @__PURE__ */ jsxDEV(Sparkle, { className: "sparkle-three" }, void 0, false, {
+      fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+      lineNumber: 149,
+      columnNumber: 13
+    }, this),
+    /* @__PURE__ */ jsxDEV("section", { className: "invitation-card", children: [
+      /* @__PURE__ */ jsxDEV("div", { className: "art-panel", children: [
+        /* @__PURE__ */ jsxDEV("img", { src: "/images/rsvp_gaia.png", alt: "Gaia’s third birthday invitation at Jollibee Fairytale Land" }, void 0, false, {
+          fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+          lineNumber: 153,
+          columnNumber: 21
+        }, this),
+        /* @__PURE__ */ jsxDEV("button", { className: "view-invitation-button", type: "button", onClick: () => setShowInvitation(true), children: [
+          /* @__PURE__ */ jsxDEV("span", { "aria-hidden": "true", children: "↗" }, void 0, false, {
+            fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+            lineNumber: 155,
+            columnNumber: 25
+          }, this),
+          " View full invitation"
+        ] }, void 0, true, {
+          fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+          lineNumber: 154,
+          columnNumber: 21
+        }, this),
+        /* @__PURE__ */ jsxDEV("div", { className: "mobile-event-details", children: [
+          /* @__PURE__ */ jsxDEV("div", { children: [
+            /* @__PURE__ */ jsxDEV("span", { className: "event-detail-icon", "aria-hidden": "true", children: "◷" }, void 0, false, {
+              fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+              lineNumber: 159,
+              columnNumber: 29
+            }, this),
+            /* @__PURE__ */ jsxDEV("span", { children: [
+              /* @__PURE__ */ jsxDEV("small", { children: "Date & time" }, void 0, false, {
+                fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+                lineNumber: 160,
+                columnNumber: 35
+              }, this),
+              /* @__PURE__ */ jsxDEV("strong", { children: "Dec 27 · 7:00–9:00 PM" }, void 0, false, {
+                fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+                lineNumber: 160,
+                columnNumber: 65
+              }, this)
+            ] }, void 0, true, {
+              fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+              lineNumber: 160,
+              columnNumber: 29
+            }, this)
+          ] }, void 0, true, {
+            fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+            lineNumber: 158,
+            columnNumber: 25
+          }, this),
+          /* @__PURE__ */ jsxDEV("div", { children: [
+            /* @__PURE__ */ jsxDEV("span", { className: "event-detail-icon", "aria-hidden": "true", children: "⌖" }, void 0, false, {
+              fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+              lineNumber: 163,
+              columnNumber: 29
+            }, this),
+            /* @__PURE__ */ jsxDEV("span", { children: [
+              /* @__PURE__ */ jsxDEV("small", { children: "Celebration venue" }, void 0, false, {
+                fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+                lineNumber: 164,
+                columnNumber: 35
+              }, this),
+              /* @__PURE__ */ jsxDEV("strong", { children: "Jollibee Global City" }, void 0, false, {
+                fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+                lineNumber: 164,
+                columnNumber: 67
+              }, this)
+            ] }, void 0, true, {
+              fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+              lineNumber: 164,
+              columnNumber: 29
+            }, this)
+          ] }, void 0, true, {
+            fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+            lineNumber: 162,
+            columnNumber: 25
+          }, this)
+        ] }, void 0, true, {
+          fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+          lineNumber: 157,
+          columnNumber: 21
+        }, this)
+      ] }, void 0, true, {
+        fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+        lineNumber: 152,
+        columnNumber: 17
+      }, this),
+      /* @__PURE__ */ jsxDEV("div", { className: "form-panel", children: [
+        /* @__PURE__ */ jsxDEV("div", { className: "floral-corner floral-top", "aria-hidden": "true", children: "✿" }, void 0, false, {
+          fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+          lineNumber: 169,
+          columnNumber: 21
+        }, this),
+        /* @__PURE__ */ jsxDEV("div", { className: "floral-corner floral-bottom", "aria-hidden": "true", children: "❀" }, void 0, false, {
+          fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+          lineNumber: 170,
+          columnNumber: 21
+        }, this),
+        /* @__PURE__ */ jsxDEV(RsvpForm, {}, void 0, false, {
+          fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+          lineNumber: 171,
+          columnNumber: 21
+        }, this)
+      ] }, void 0, true, {
+        fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+        lineNumber: 168,
+        columnNumber: 17
+      }, this)
+    ] }, void 0, true, {
+      fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+      lineNumber: 151,
+      columnNumber: 13
+    }, this),
+    /* @__PURE__ */ jsxDEV("footer", { children: [
+      "Made with love for Princess Gaia ",
+      /* @__PURE__ */ jsxDEV("span", { "aria-hidden": "true", children: "♥" }, void 0, false, {
+        fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+        lineNumber: 175,
+        columnNumber: 54
+      }, this)
+    ] }, void 0, true, {
+      fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+      lineNumber: 175,
+      columnNumber: 13
+    }, this),
+    showInvitation && /* @__PURE__ */ jsxDEV(InvitationModal, { onClose: () => setShowInvitation(false) }, void 0, false, {
+      fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+      lineNumber: 176,
+      columnNumber: 32
+    }, this)
+  ] }, void 0, true, {
+    fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+    lineNumber: 144,
+    columnNumber: 5
+  }, this);
+}
+_s3(App, "WwWbACHl3eGtrIqrukcD7JWySbw=");
+_c5 = App;
+createRoot(document.getElementById("app")).render(/* @__PURE__ */ jsxDEV(App, {}, void 0, false, {
+  fileName: "C:/xampp/htdocs/RSVP/resources/js/app.jsx",
+  lineNumber: 181,
+  columnNumber: 51
+}, this));
+var _c, _c2, _c3, _c4, _c5;
+$RefreshReg$(_c, "Sparkle");
+$RefreshReg$(_c2, "GuestIcon");
+$RefreshReg$(_c3, "RsvpForm");
+$RefreshReg$(_c4, "InvitationModal");
+$RefreshReg$(_c5, "App");
+import * as RefreshRuntime from "/@react-refresh";
+const inWebWorker = typeof WorkerGlobalScope !== "undefined" && self instanceof WorkerGlobalScope;
+if (import.meta.hot && !inWebWorker) {
+  if (!window.$RefreshReg$) {
+    throw new Error(
+      "@vitejs/plugin-react can't detect preamble. Something is wrong."
+    );
+  }
+  RefreshRuntime.__hmr_import(import.meta.url).then((currentExports) => {
+    RefreshRuntime.registerExportsForReactRefresh("C:/xampp/htdocs/RSVP/resources/js/app.jsx", currentExports);
+    import.meta.hot.accept((nextExports) => {
+      if (!nextExports) return;
+      const invalidateMessage = RefreshRuntime.validateRefreshBoundaryAndEnqueueUpdate("C:/xampp/htdocs/RSVP/resources/js/app.jsx", currentExports, nextExports);
+      if (invalidateMessage) import.meta.hot.invalidate(invalidateMessage);
+    });
+  });
+}
+function $RefreshReg$(type, id) {
+  return RefreshRuntime.register(type, "C:/xampp/htdocs/RSVP/resources/js/app.jsx " + id);
+}
+function $RefreshSig$() {
+  return RefreshRuntime.createSignatureFunctionForTransform();
+}
+
+//# sourceMappingURL=data:application/json;base64,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QUE7QUFBQTtBQUFBO0FBQUEsZUFBUztBQUFBLFdBSGI7QUFBQTtBQUFBO0FBQUE7QUFBQSxhQUlBO0FBQUEsU0FyQko7QUFBQTtBQUFBO0FBQUE7QUFBQSxXQXNCQTtBQUFBLElBRUEsdUJBQUMsWUFBTztBQUFBO0FBQUEsTUFBaUMsdUJBQUMsVUFBSyxlQUFZLFFBQU8saUJBQXpCO0FBQUE7QUFBQTtBQUFBO0FBQUEsYUFBMEI7QUFBQSxTQUFuRTtBQUFBO0FBQUE7QUFBQTtBQUFBLFdBQTBFO0FBQUEsSUFDekVELGtCQUFrQix1QkFBQyxtQkFBZ0IsU0FBUyxNQUFNQyxrQkFBa0IsS0FBSyxLQUF2RDtBQUFBO0FBQUE7QUFBQTtBQUFBLFdBQXlEO0FBQUEsT0FoQ2hGO0FBQUE7QUFBQTtBQUFBO0FBQUEsU0FpQ0E7QUFFUjtBQUFDRixJQXZDUUQsS0FBRztBQUFBLE1BQUhBO0FBeUNUaEQsV0FBV3dDLFNBQVNZLGVBQWUsS0FBSyxDQUFDLEVBQUVDLE9BQU8sdUJBQUMsU0FBRDtBQUFBO0FBQUE7QUFBQTtBQUFBLE9BQUksQ0FBRztBQUFFLElBQUFsRCxJQUFBRSxLQUFBaUQsS0FBQUMsS0FBQUM7QUFBQSxhQUFBckQsSUFBQTtBQUFBLGFBQUFFLEtBQUE7QUFBQSxhQUFBaUQsS0FBQTtBQUFBLGFBQUFDLEtBQUE7QUFBQSxhQUFBQyxLQUFBIiwibmFtZXMiOlsiUmVhY3QiLCJ1c2VFZmZlY3QiLCJ1c2VTdGF0ZSIsImNyZWF0ZVJvb3QiLCJTcGFya2xlIiwiY2xhc3NOYW1lIiwiX2MiLCJHdWVzdEljb24iLCJfYzIiLCJSc3ZwRm9ybSIsIl9zIiwiYXR0ZW5kaW5nIiwic2V0QXR0ZW5kaW5nIiwiZ3Vlc3RzIiwic2V0R3Vlc3RzIiwic3VibWl0dGVkIiwic2V0U3VibWl0dGVkIiwiYWRkR3Vlc3QiLCJjdXJyZW50IiwicmVtb3ZlR3Vlc3QiLCJpbmRleCIsImZpbHRlciIsIl8iLCJpIiwidXBkYXRlR3Vlc3QiLCJ2YWx1ZSIsIm1hcCIsImd1ZXN0IiwiY2hvb3NlQXR0ZW5kYW5jZSIsInN1Ym1pdFByZXZpZXciLCJldmVudCIsInByZXZlbnREZWZhdWx0IiwidHJpbSIsImd1ZXN0Q291bnQiLCJuYW1lIiwibGVuZ3RoIiwidGFyZ2V0IiwiSW52aXRhdGlvbk1vZGFsIiwib25DbG9zZSIsIl9zMiIsImhhbmRsZUtleURvd24iLCJrZXkiLCJwcmV2aW91c092ZXJmbG93IiwiZG9jdW1lbnQiLCJib2R5Iiwic3R5bGUiLCJvdmVyZmxvdyIsIndpbmRvdyIsImFkZEV2ZW50TGlzdGVuZXIiLCJyZW1vdmVFdmVudExpc3RlbmVyIiwic3RvcFByb3BhZ2F0aW9uIiwiQXBwIiwiX3MzIiwic2hvd0ludml0YXRpb24iLCJzZXRTaG93SW52aXRhdGlvbiIsImdldEVsZW1lbnRCeUlkIiwicmVuZGVyIiwiX2MzIiwiX2M0IiwiX2M1Il0sImlnbm9yZUxpc3QiOltdLCJzb3VyY2VzIjpbImFwcC5qc3giXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0ICcuL2Jvb3RzdHJhcCc7XG5pbXBvcnQgUmVhY3QsIHsgdXNlRWZmZWN0LCB1c2VTdGF0ZSB9IGZyb20gJ3JlYWN0JztcbmltcG9ydCB7IGNyZWF0ZVJvb3QgfSBmcm9tICdyZWFjdC1kb20vY2xpZW50JztcblxuY29uc3QgU3BhcmtsZSA9ICh7IGNsYXNzTmFtZSA9ICcnIH0pID0+IDxzcGFuIGNsYXNzTmFtZT17YHNwYXJrbGUgJHtjbGFzc05hbWV9YH0gYXJpYS1oaWRkZW49XCJ0cnVlXCI+4pymPC9zcGFuPjtcblxuY29uc3QgR3Vlc3RJY29uID0gKCkgPT4gKFxuICAgIDxzdmcgdmlld0JveD1cIjAgMCAyNCAyNFwiIGFyaWEtaGlkZGVuPVwidHJ1ZVwiPlxuICAgICAgICA8cGF0aCBkPVwiTTE2IDIxdi0yYTQgNCAwIDAgMC00LTRINmE0IDQgMCAwIDAtNCA0djJNOSAxMWE0IDQgMCAxIDAgMC04IDQgNCAwIDAgMCAwIDhaTTIyIDIxdi0yYTQgNCAwIDAgMC0zLTMuODdNMTYgMy4xM2E0IDQgMCAwIDEgMCA3Ljc1XCIgLz5cbiAgICA8L3N2Zz5cbik7XG5cbmZ1bmN0aW9uIFJzdnBGb3JtKCkge1xuICAgIGNvbnN0IFthdHRlbmRpbmcsIHNldEF0dGVuZGluZ10gPSB1c2VTdGF0ZSgneWVzJyk7XG4gICAgY29uc3QgW2d1ZXN0cywgc2V0R3Vlc3RzXSA9IHVzZVN0YXRlKFsnJ10pO1xuICAgIGNvbnN0IFtzdWJtaXR0ZWQsIHNldFN1Ym1pdHRlZF0gPSB1c2VTdGF0ZShmYWxzZSk7XG5cbiAgICBjb25zdCBhZGRHdWVzdCA9ICgpID0+IHNldEd1ZXN0cygoY3VycmVudCkgPT4gWy4uLmN1cnJlbnQsICcnXSk7XG4gICAgY29uc3QgcmVtb3ZlR3Vlc3QgPSAoaW5kZXgpID0+IHNldEd1ZXN0cygoY3VycmVudCkgPT4gY3VycmVudC5maWx0ZXIoKF8sIGkpID0+IGkgIT09IGluZGV4KSk7XG4gICAgY29uc3QgdXBkYXRlR3Vlc3QgPSAoaW5kZXgsIHZhbHVlKSA9PiBzZXRHdWVzdHMoKGN1cnJlbnQpID0+IGN1cnJlbnQubWFwKChndWVzdCwgaSkgPT4gKGkgPT09IGluZGV4ID8gdmFsdWUgOiBndWVzdCkpKTtcblxuICAgIGNvbnN0IGNob29zZUF0dGVuZGFuY2UgPSAodmFsdWUpID0+IHtcbiAgICAgICAgc2V0QXR0ZW5kaW5nKHZhbHVlKTtcbiAgICAgICAgaWYgKHZhbHVlID09PSAnbm8nKSBzZXRHdWVzdHMoKGN1cnJlbnQpID0+IFtjdXJyZW50WzBdID8/ICcnXSk7XG4gICAgfTtcblxuICAgIGNvbnN0IHN1Ym1pdFByZXZpZXcgPSAoZXZlbnQpID0+IHtcbiAgICAgICAgZXZlbnQucHJldmVudERlZmF1bHQoKTtcbiAgICAgICAgaWYgKCFndWVzdHNbMF0udHJpbSgpKSByZXR1cm47XG4gICAgICAgIHNldFN1Ym1pdHRlZCh0cnVlKTtcbiAgICB9O1xuXG4gICAgaWYgKHN1Ym1pdHRlZCkge1xuICAgICAgICBjb25zdCBndWVzdENvdW50ID0gZ3Vlc3RzLmZpbHRlcigobmFtZSkgPT4gbmFtZS50cmltKCkpLmxlbmd0aDtcbiAgICAgICAgcmV0dXJuIChcbiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwic3VjY2Vzcy1jYXJkXCIgcm9sZT1cInN0YXR1c1wiPlxuICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwic3VjY2Vzcy1jcm93blwiPuKZmzwvZGl2PlxuICAgICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT1cImV5ZWJyb3dcIj5Zb3VyIHJlcGx5IHdhcyByZWNlaXZlZDwvcD5cbiAgICAgICAgICAgICAgICA8aDI+e2F0dGVuZGluZyA9PT0gJ3llcycgPyAnU2VlIHlvdSBpbiBGYWlyeXRhbGUgTGFuZCEnIDogJ1RoYW5rIHlvdSBmb3IgbGV0dGluZyB1cyBrbm93J308L2gyPlxuICAgICAgICAgICAgICAgIDxwPlxuICAgICAgICAgICAgICAgICAgICB7YXR0ZW5kaW5nID09PSAneWVzJ1xuICAgICAgICAgICAgICAgICAgICAgICAgPyBgV2Ugc2F2ZWQgJHtndWVzdENvdW50fSBndWVzdCAke2d1ZXN0Q291bnQgPT09IDEgPyAnbmFtZScgOiAnbmFtZXMnfSBmb3IgR2FpYeKAmXMgY2VsZWJyYXRpb24uYFxuICAgICAgICAgICAgICAgICAgICAgICAgOiAnR2FpYSB3aWxsIG1pc3MgeW91LCBidXQgd2UgdHJ1bHkgYXBwcmVjaWF0ZSB5b3VyIHJlc3BvbnNlLid9XG4gICAgICAgICAgICAgICAgPC9wPlxuICAgICAgICAgICAgICAgIDxidXR0b24gY2xhc3NOYW1lPVwic2Vjb25kYXJ5LWJ1dHRvblwiIHR5cGU9XCJidXR0b25cIiBvbkNsaWNrPXsoKSA9PiBzZXRTdWJtaXR0ZWQoZmFsc2UpfT5FZGl0IG15IHJlc3BvbnNlPC9idXR0b24+XG4gICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgKTtcbiAgICB9XG5cbiAgICByZXR1cm4gKFxuICAgICAgICA8Zm9ybSBjbGFzc05hbWU9XCJyc3ZwLWZvcm1cIiBvblN1Ym1pdD17c3VibWl0UHJldmlld30+XG4gICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImZvcm0taGVhZGluZ1wiPlxuICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwibWluaS1jcm93blwiIGFyaWEtaGlkZGVuPVwidHJ1ZVwiPuKZmzwvZGl2PlxuICAgICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT1cImV5ZWJyb3dcIj5UaGUgcm95YWwgaW52aXRhdGlvbiBhd2FpdHM8L3A+XG4gICAgICAgICAgICAgICAgPGgxPldpbGwgeW91IGpvaW4gdGhlIG1hZ2ljPzwvaDE+XG4gICAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPVwiaW50cm9cIj5LaW5kbHkgc2VuZCB5b3VyIHJlc3BvbnNlIG9uIG9yIGJlZm9yZSBEZWNlbWJlciAyMCwgMjAyNi48L3A+XG4gICAgICAgICAgICA8L2Rpdj5cblxuICAgICAgICAgICAgPGZpZWxkc2V0IGNsYXNzTmFtZT1cImF0dGVuZGFuY2UtZmllbGRzZXRcIj5cbiAgICAgICAgICAgICAgICA8bGVnZW5kPldpbGwgeW91IGJlIGF0dGVuZGluZz88L2xlZ2VuZD5cbiAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImF0dGVuZGFuY2Utb3B0aW9uc1wiPlxuICAgICAgICAgICAgICAgICAgICA8YnV0dG9uIGNsYXNzTmFtZT17YGF0dGVuZGFuY2UtY2FyZCAke2F0dGVuZGluZyA9PT0gJ3llcycgPyAnc2VsZWN0ZWQnIDogJyd9YH0gdHlwZT1cImJ1dHRvblwiIGFyaWEtcHJlc3NlZD17YXR0ZW5kaW5nID09PSAneWVzJ30gb25DbGljaz17KCkgPT4gY2hvb3NlQXR0ZW5kYW5jZSgneWVzJyl9PlxuICAgICAgICAgICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPVwiY2hvaWNlLWljb25cIj7imaU8L3NwYW4+XG4gICAgICAgICAgICAgICAgICAgICAgICA8c3Bhbj48c3Ryb25nPkpveWZ1bGx5IGFjY2VwdHM8L3N0cm9uZz48c21hbGw+V2XigJlsbCBiZSB0aGVyZSE8L3NtYWxsPjwvc3Bhbj5cbiAgICAgICAgICAgICAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT1cInJhZGlvLW1hcmtcIiAvPlxuICAgICAgICAgICAgICAgICAgICA8L2J1dHRvbj5cbiAgICAgICAgICAgICAgICAgICAgPGJ1dHRvbiBjbGFzc05hbWU9e2BhdHRlbmRhbmNlLWNhcmQgJHthdHRlbmRpbmcgPT09ICdubycgPyAnc2VsZWN0ZWQnIDogJyd9YH0gdHlwZT1cImJ1dHRvblwiIGFyaWEtcHJlc3NlZD17YXR0ZW5kaW5nID09PSAnbm8nfSBvbkNsaWNrPXsoKSA9PiBjaG9vc2VBdHRlbmRhbmNlKCdubycpfT5cbiAgICAgICAgICAgICAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT1cImNob2ljZS1pY29uXCI+4pymPC9zcGFuPlxuICAgICAgICAgICAgICAgICAgICAgICAgPHNwYW4+PHN0cm9uZz5TYWRseSBkZWNsaW5lczwvc3Ryb25nPjxzbWFsbD5XZSBjYW7igJl0IG1ha2UgaXQ8L3NtYWxsPjwvc3Bhbj5cbiAgICAgICAgICAgICAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT1cInJhZGlvLW1hcmtcIiAvPlxuICAgICAgICAgICAgICAgICAgICA8L2J1dHRvbj5cbiAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgIDwvZmllbGRzZXQ+XG5cbiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiZ3Vlc3Qtc2VjdGlvblwiPlxuICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwic2VjdGlvbi1sYWJlbFwiPlxuICAgICAgICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9XCJsYWJlbC1pY29uXCI+PEd1ZXN0SWNvbiAvPjwvc3Bhbj5cbiAgICAgICAgICAgICAgICAgICAgPHNwYW4+XG4gICAgICAgICAgICAgICAgICAgICAgICA8c3Ryb25nPnthdHRlbmRpbmcgPT09ICd5ZXMnID8gJ1dob+KAmXMgY29taW5nPycgOiAnWW91ciBmdWxsIG5hbWUnfTwvc3Ryb25nPlxuICAgICAgICAgICAgICAgICAgICAgICAgPHNtYWxsPnthdHRlbmRpbmcgPT09ICd5ZXMnID8gJ1BsZWFzZSBsaXN0IGVhY2ggZ3Vlc3TigJlzIGZ1bGwgbmFtZS4nIDogJ1BsZWFzZSB0ZWxsIHVzIHdobyBpcyByZXNwb25kaW5nLid9PC9zbWFsbD5cbiAgICAgICAgICAgICAgICAgICAgPC9zcGFuPlxuICAgICAgICAgICAgICAgIDwvZGl2PlxuXG4gICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJndWVzdC1saXN0XCI+XG4gICAgICAgICAgICAgICAgICAgIHtndWVzdHMubWFwKChndWVzdCwgaW5kZXgpID0+IChcbiAgICAgICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiZ3Vlc3Qtcm93XCIga2V5PXtpbmRleH0+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgPGxhYmVsIGh0bWxGb3I9e2BndWVzdC0ke2luZGV4fWB9PntpbmRleCA9PT0gMCA/ICdGdWxsIG5hbWUnIDogYEd1ZXN0ICR7aW5kZXggKyAxfWB9PC9sYWJlbD5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImlucHV0LXdyYXBcIj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPGlucHV0IGlkPXtgZ3Vlc3QtJHtpbmRleH1gfSB0eXBlPVwidGV4dFwiIHZhbHVlPXtndWVzdH0gcGxhY2Vob2xkZXI9e2luZGV4ID09PSAwID8gJ2UuZy4gTWFyaWEgU2FudG9zJyA6ICdFbnRlciBndWVzdOKAmXMgZnVsbCBuYW1lJ30gb25DaGFuZ2U9eyhldmVudCkgPT4gdXBkYXRlR3Vlc3QoaW5kZXgsIGV2ZW50LnRhcmdldC52YWx1ZSl9IHJlcXVpcmVkIC8+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHtpbmRleCA+IDAgJiYgPGJ1dHRvbiB0eXBlPVwiYnV0dG9uXCIgY2xhc3NOYW1lPVwicmVtb3ZlLWd1ZXN0XCIgb25DbGljaz17KCkgPT4gcmVtb3ZlR3Vlc3QoaW5kZXgpfSBhcmlhLWxhYmVsPXtgUmVtb3ZlIGd1ZXN0ICR7aW5kZXggKyAxfWB9PsOXPC9idXR0b24+fVxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgICAgICAgICAgICkpfVxuICAgICAgICAgICAgICAgIDwvZGl2PlxuXG4gICAgICAgICAgICAgICAge2F0dGVuZGluZyA9PT0gJ3llcycgJiYgZ3Vlc3RzLmxlbmd0aCA8IDggJiYgKFxuICAgICAgICAgICAgICAgICAgICA8YnV0dG9uIGNsYXNzTmFtZT1cImFkZC1ndWVzdFwiIHR5cGU9XCJidXR0b25cIiBvbkNsaWNrPXthZGRHdWVzdH0+PHNwYW4+77yLPC9zcGFuPiBBZGQgYW5vdGhlciBndWVzdDwvYnV0dG9uPlxuICAgICAgICAgICAgICAgICl9XG4gICAgICAgICAgICA8L2Rpdj5cblxuICAgICAgICAgICAgPGJ1dHRvbiBjbGFzc05hbWU9XCJzdWJtaXQtYnV0dG9uXCIgdHlwZT1cInN1Ym1pdFwiPlxuICAgICAgICAgICAgICAgIDxzcGFuPnthdHRlbmRpbmcgPT09ICd5ZXMnID8gJ1NlbmQgb3VyIHJveWFsIFJTVlAnIDogJ1NlbmQgbXkgcmVzcG9uc2UnfTwvc3Bhbj5cbiAgICAgICAgICAgICAgICA8c3BhbiBhcmlhLWhpZGRlbj1cInRydWVcIj7ihpI8L3NwYW4+XG4gICAgICAgICAgICA8L2J1dHRvbj5cbiAgICAgICAgICAgIDxwIGNsYXNzTmFtZT1cInByaXZhY3ktbm90ZVwiPllvdXIgcmVzcG9uc2Ugd2lsbCBvbmx5IGJlIHVzZWQgZm9yIHRoaXMgY2VsZWJyYXRpb24uPC9wPlxuICAgICAgICA8L2Zvcm0+XG4gICAgKTtcbn1cblxuZnVuY3Rpb24gSW52aXRhdGlvbk1vZGFsKHsgb25DbG9zZSB9KSB7XG4gICAgdXNlRWZmZWN0KCgpID0+IHtcbiAgICAgICAgY29uc3QgaGFuZGxlS2V5RG93biA9IChldmVudCkgPT4ge1xuICAgICAgICAgICAgaWYgKGV2ZW50LmtleSA9PT0gJ0VzY2FwZScpIG9uQ2xvc2UoKTtcbiAgICAgICAgfTtcblxuICAgICAgICBjb25zdCBwcmV2aW91c092ZXJmbG93ID0gZG9jdW1lbnQuYm9keS5zdHlsZS5vdmVyZmxvdztcbiAgICAgICAgZG9jdW1lbnQuYm9keS5zdHlsZS5vdmVyZmxvdyA9ICdoaWRkZW4nO1xuICAgICAgICB3aW5kb3cuYWRkRXZlbnRMaXN0ZW5lcigna2V5ZG93bicsIGhhbmRsZUtleURvd24pO1xuXG4gICAgICAgIHJldHVybiAoKSA9PiB7XG4gICAgICAgICAgICBkb2N1bWVudC5ib2R5LnN0eWxlLm92ZXJmbG93ID0gcHJldmlvdXNPdmVyZmxvdztcbiAgICAgICAgICAgIHdpbmRvdy5yZW1vdmVFdmVudExpc3RlbmVyKCdrZXlkb3duJywgaGFuZGxlS2V5RG93bik7XG4gICAgICAgIH07XG4gICAgfSwgW29uQ2xvc2VdKTtcblxuICAgIHJldHVybiAoXG4gICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiaW52aXRhdGlvbi1tb2RhbFwiIHJvbGU9XCJkaWFsb2dcIiBhcmlhLW1vZGFsPVwidHJ1ZVwiIGFyaWEtbGFiZWw9XCJGdWxsIGJpcnRoZGF5IGludml0YXRpb25cIiBvbkNsaWNrPXtvbkNsb3NlfT5cbiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwibW9kYWwtdG9vbGJhclwiPlxuICAgICAgICAgICAgICAgIDxzcGFuPkdhaWHigJlzIHJveWFsIGludml0YXRpb248L3NwYW4+XG4gICAgICAgICAgICAgICAgPGJ1dHRvbiB0eXBlPVwiYnV0dG9uXCIgb25DbGljaz17b25DbG9zZX0gYXJpYS1sYWJlbD1cIkNsb3NlIGZ1bGwgaW52aXRhdGlvblwiPsOXPC9idXR0b24+XG4gICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwibW9kYWwtaW1hZ2Utd3JhcFwiIG9uQ2xpY2s9eyhldmVudCkgPT4gZXZlbnQuc3RvcFByb3BhZ2F0aW9uKCl9PlxuICAgICAgICAgICAgICAgIDxpbWcgc3JjPVwiL2ltYWdlcy9yc3ZwX2dhaWEucG5nXCIgYWx0PVwiRnVsbCBpbnZpdGF0aW9uIGZvciBHYWlh4oCZcyB0aGlyZCBiaXJ0aGRheSBhdCBKb2xsaWJlZSBGYWlyeXRhbGUgTGFuZFwiIC8+XG4gICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgIDxwIGNsYXNzTmFtZT1cInpvb20taGludFwiPlBpbmNoIG9yIGRvdWJsZS10YXAgdG8gdGFrZSBhIGNsb3NlciBsb29rPC9wPlxuICAgICAgICA8L2Rpdj5cbiAgICApO1xufVxuXG5mdW5jdGlvbiBBcHAoKSB7XG4gICAgY29uc3QgW3Nob3dJbnZpdGF0aW9uLCBzZXRTaG93SW52aXRhdGlvbl0gPSB1c2VTdGF0ZShmYWxzZSk7XG5cbiAgICByZXR1cm4gKFxuICAgICAgICA8bWFpbiBjbGFzc05hbWU9XCJwYWdlLXNoZWxsXCI+XG4gICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImJhY2tncm91bmQtY2xvdWQgY2xvdWQtb25lXCIgLz5cbiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiYmFja2dyb3VuZC1jbG91ZCBjbG91ZC10d29cIiAvPlxuICAgICAgICAgICAgPFNwYXJrbGUgY2xhc3NOYW1lPVwic3BhcmtsZS1vbmVcIiAvPlxuICAgICAgICAgICAgPFNwYXJrbGUgY2xhc3NOYW1lPVwic3BhcmtsZS10d29cIiAvPlxuICAgICAgICAgICAgPFNwYXJrbGUgY2xhc3NOYW1lPVwic3BhcmtsZS10aHJlZVwiIC8+XG5cbiAgICAgICAgICAgIDxzZWN0aW9uIGNsYXNzTmFtZT1cImludml0YXRpb24tY2FyZFwiPlxuICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiYXJ0LXBhbmVsXCI+XG4gICAgICAgICAgICAgICAgICAgIDxpbWcgc3JjPVwiL2ltYWdlcy9yc3ZwX2dhaWEucG5nXCIgYWx0PVwiR2FpYeKAmXMgdGhpcmQgYmlydGhkYXkgaW52aXRhdGlvbiBhdCBKb2xsaWJlZSBGYWlyeXRhbGUgTGFuZFwiIC8+XG4gICAgICAgICAgICAgICAgICAgIDxidXR0b24gY2xhc3NOYW1lPVwidmlldy1pbnZpdGF0aW9uLWJ1dHRvblwiIHR5cGU9XCJidXR0b25cIiBvbkNsaWNrPXsoKSA9PiBzZXRTaG93SW52aXRhdGlvbih0cnVlKX0+XG4gICAgICAgICAgICAgICAgICAgICAgICA8c3BhbiBhcmlhLWhpZGRlbj1cInRydWVcIj7ihpc8L3NwYW4+IFZpZXcgZnVsbCBpbnZpdGF0aW9uXG4gICAgICAgICAgICAgICAgICAgIDwvYnV0dG9uPlxuICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cIm1vYmlsZS1ldmVudC1kZXRhaWxzXCI+XG4gICAgICAgICAgICAgICAgICAgICAgICA8ZGl2PlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT1cImV2ZW50LWRldGFpbC1pY29uXCIgYXJpYS1oaWRkZW49XCJ0cnVlXCI+4pe3PC9zcGFuPlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxzcGFuPjxzbWFsbD5EYXRlICZhbXA7IHRpbWU8L3NtYWxsPjxzdHJvbmc+RGVjIDI3IMK3IDc6MDDigJM5OjAwIFBNPC9zdHJvbmc+PC9zcGFuPlxuICAgICAgICAgICAgICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgICAgICAgICAgICAgICA8ZGl2PlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT1cImV2ZW50LWRldGFpbC1pY29uXCIgYXJpYS1oaWRkZW49XCJ0cnVlXCI+4oyWPC9zcGFuPlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxzcGFuPjxzbWFsbD5DZWxlYnJhdGlvbiB2ZW51ZTwvc21hbGw+PHN0cm9uZz5Kb2xsaWJlZSBHbG9iYWwgQ2l0eTwvc3Ryb25nPjwvc3Bhbj5cbiAgICAgICAgICAgICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImZvcm0tcGFuZWxcIj5cbiAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJmbG9yYWwtY29ybmVyIGZsb3JhbC10b3BcIiBhcmlhLWhpZGRlbj1cInRydWVcIj7inL88L2Rpdj5cbiAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJmbG9yYWwtY29ybmVyIGZsb3JhbC1ib3R0b21cIiBhcmlhLWhpZGRlbj1cInRydWVcIj7inYA8L2Rpdj5cbiAgICAgICAgICAgICAgICAgICAgPFJzdnBGb3JtIC8+XG4gICAgICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgICA8L3NlY3Rpb24+XG5cbiAgICAgICAgICAgIDxmb290ZXI+TWFkZSB3aXRoIGxvdmUgZm9yIFByaW5jZXNzIEdhaWEgPHNwYW4gYXJpYS1oaWRkZW49XCJ0cnVlXCI+4pmlPC9zcGFuPjwvZm9vdGVyPlxuICAgICAgICAgICAge3Nob3dJbnZpdGF0aW9uICYmIDxJbnZpdGF0aW9uTW9kYWwgb25DbG9zZT17KCkgPT4gc2V0U2hvd0ludml0YXRpb24oZmFsc2UpfSAvPn1cbiAgICAgICAgPC9tYWluPlxuICAgICk7XG59XG5cbmNyZWF0ZVJvb3QoZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2FwcCcpKS5yZW5kZXIoPEFwcCAvPik7XG4iXSwiZmlsZSI6IkM6L3hhbXBwL2h0ZG9jcy9SU1ZQL3Jlc291cmNlcy9qcy9hcHAuanN4In0=

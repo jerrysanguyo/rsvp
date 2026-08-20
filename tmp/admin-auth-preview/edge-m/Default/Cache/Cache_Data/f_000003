@@ -1,0 +1,512 @@
+import { createHotContext as __vite__createHotContext } from "/@vite/client";import.meta.hot = __vite__createHotContext("/resources/js/admin.jsx");import __vite__cjsImport0_react_jsxDevRuntime from "/node_modules/.vite/deps/react_jsx-dev-runtime.js?v=b555dcc6"; const jsxDEV = __vite__cjsImport0_react_jsxDevRuntime["jsxDEV"];
+var _s = $RefreshSig$(), _s2 = $RefreshSig$();
+import "/resources/js/bootstrap.js";
+import __vite__cjsImport2_react from "/node_modules/.vite/deps/react.js?v=b555dcc6"; const React = __vite__cjsImport2_react.__esModule ? __vite__cjsImport2_react.default : __vite__cjsImport2_react; const useState = __vite__cjsImport2_react["useState"];
+import __vite__cjsImport3_reactDom_client from "/node_modules/.vite/deps/react-dom_client.js?v=b555dcc6"; const createRoot = __vite__cjsImport3_reactDom_client["createRoot"];
+import Alert from "/resources/js/components/ui/Alert.jsx";
+import BrandMark from "/resources/js/components/ui/BrandMark.jsx";
+import Button from "/resources/js/components/ui/Button.jsx";
+import TextInput from "/resources/js/components/ui/TextInput.jsx";
+const EmailIcon = () => /* @__PURE__ */ jsxDEV("svg", { viewBox: "0 0 24 24", "aria-hidden": "true", children: /* @__PURE__ */ jsxDEV("path", { d: "M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Zm18 2-10 7L2 6" }, void 0, false, {
+  fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+  lineNumber: 10,
+  columnNumber: 45
+}, this) }, void 0, false, {
+  fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+  lineNumber: 10,
+  columnNumber: 1
+}, this);
+_c = EmailIcon;
+const LockIcon = () => /* @__PURE__ */ jsxDEV("svg", { viewBox: "0 0 24 24", "aria-hidden": "true", children: /* @__PURE__ */ jsxDEV("path", { d: "M5 11h14v10H5V11Zm3 0V7a4 4 0 0 1 8 0v4" }, void 0, false, {
+  fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+  lineNumber: 14,
+  columnNumber: 45
+}, this) }, void 0, false, {
+  fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+  lineNumber: 14,
+  columnNumber: 1
+}, this);
+_c2 = LockIcon;
+const EyeIcon = ({ hidden }) => /* @__PURE__ */ jsxDEV("svg", { viewBox: "0 0 24 24", "aria-hidden": "true", children: [
+  /* @__PURE__ */ jsxDEV("path", { d: "M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z" }, void 0, false, {
+    fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+    lineNumber: 19,
+    columnNumber: 9
+  }, this),
+  /* @__PURE__ */ jsxDEV("circle", { cx: "12", cy: "12", r: "2.5" }, void 0, false, {
+    fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+    lineNumber: 20,
+    columnNumber: 9
+  }, this),
+  hidden && /* @__PURE__ */ jsxDEV("path", { d: "m4 4 16 16" }, void 0, false, {
+    fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+    lineNumber: 21,
+    columnNumber: 20
+  }, this)
+] }, void 0, true, {
+  fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+  lineNumber: 18,
+  columnNumber: 1
+}, this);
+_c3 = EyeIcon;
+function LoginPage({ loginUrl, flash = {} }) {
+  _s();
+  const [values, setValues] = useState({ email: "", password: "" });
+  const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [alert, setAlert] = useState(
+    flash.error ? { variant: "error", message: flash.error } : flash.success ? { variant: "success", message: flash.success } : null
+  );
+  const updateValue = (event) => {
+    const { name, value } = event.target;
+    setValues((current) => ({ ...current, [name]: value }));
+    setErrors((current) => ({ ...current, [name]: void 0 }));
+  };
+  const validate = () => {
+    const nextErrors = {};
+    if (!values.email.trim()) nextErrors.email = "Email address is required.";
+    else if (!/^\S+@\S+\.\S+$/.test(values.email)) nextErrors.email = "Enter a valid email address.";
+    if (!values.password) nextErrors.password = "Password is required.";
+    setErrors(nextErrors);
+    return Object.keys(nextErrors).length === 0;
+  };
+  const submit = async (event) => {
+    event.preventDefault();
+    setAlert(null);
+    if (!validate()) return;
+    setSubmitting(true);
+    try {
+      const response = await window.axios.post(loginUrl, values, { headers: { Accept: "application/json" } });
+      setAlert({ variant: "success", message: response.data.message });
+      window.setTimeout(() => window.location.assign(response.data.redirect), 450);
+    } catch (error) {
+      const status = error.response?.status;
+      const responseErrors = error.response?.data?.errors ?? {};
+      setErrors(Object.fromEntries(Object.entries(responseErrors).map(([key, messages]) => [key, messages[0]])));
+      let message = error.response?.data?.message ?? "We could not sign you in. Please try again.";
+      if (status === 422 && responseErrors.email) message = "The email or password is incorrect, or the account is inactive.";
+      if (status === 419) message = "Your secure session expired. Refresh the page and try again.";
+      setAlert({ variant: "error", message });
+    } finally {
+      setSubmitting(false);
+    }
+  };
+  return /* @__PURE__ */ jsxDEV("main", { className: "admin-auth-shell", children: /* @__PURE__ */ jsxDEV("section", { className: "admin-auth-card", children: [
+    /* @__PURE__ */ jsxDEV("aside", { className: "admin-auth-art", children: [
+      /* @__PURE__ */ jsxDEV("img", { src: "/images/rsvp_gaia.png", alt: "Gaia’s Fairytale Land birthday invitation" }, void 0, false, {
+        fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+        lineNumber: 77,
+        columnNumber: 21
+      }, this),
+      /* @__PURE__ */ jsxDEV("div", { className: "admin-auth-art__overlay", children: [
+        /* @__PURE__ */ jsxDEV("span", { className: "admin-auth-art__badge", children: "Private administration" }, void 0, false, {
+          fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+          lineNumber: 79,
+          columnNumber: 25
+        }, this),
+        /* @__PURE__ */ jsxDEV("h1", { children: [
+          "Every royal guest,",
+          /* @__PURE__ */ jsxDEV("br", {}, void 0, false, {
+            fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+            lineNumber: 80,
+            columnNumber: 47
+          }, this),
+          "beautifully organized."
+        ] }, void 0, true, {
+          fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+          lineNumber: 80,
+          columnNumber: 25
+        }, this),
+        /* @__PURE__ */ jsxDEV("p", { children: "Manage invitations and responses from one secure place." }, void 0, false, {
+          fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+          lineNumber: 81,
+          columnNumber: 25
+        }, this)
+      ] }, void 0, true, {
+        fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+        lineNumber: 78,
+        columnNumber: 21
+      }, this)
+    ] }, void 0, true, {
+      fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+      lineNumber: 76,
+      columnNumber: 17
+    }, this),
+    /* @__PURE__ */ jsxDEV("div", { className: "admin-auth-form-panel", children: /* @__PURE__ */ jsxDEV("div", { className: "admin-auth-form-wrap", children: [
+      /* @__PURE__ */ jsxDEV(BrandMark, {}, void 0, false, {
+        fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+        lineNumber: 87,
+        columnNumber: 25
+      }, this),
+      /* @__PURE__ */ jsxDEV("div", { className: "admin-auth-heading", children: [
+        /* @__PURE__ */ jsxDEV("p", { className: "eyebrow", children: "Welcome back" }, void 0, false, {
+          fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+          lineNumber: 89,
+          columnNumber: 29
+        }, this),
+        /* @__PURE__ */ jsxDEV("h2", { children: "Sign in to your dashboard" }, void 0, false, {
+          fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+          lineNumber: 90,
+          columnNumber: 29
+        }, this),
+        /* @__PURE__ */ jsxDEV("p", { children: "Use your administrator email and password." }, void 0, false, {
+          fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+          lineNumber: 91,
+          columnNumber: 29
+        }, this)
+      ] }, void 0, true, {
+        fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+        lineNumber: 88,
+        columnNumber: 25
+      }, this),
+      alert && /* @__PURE__ */ jsxDEV(Alert, { variant: alert.variant, message: alert.message, onDismiss: () => setAlert(null) }, void 0, false, {
+        fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+        lineNumber: 94,
+        columnNumber: 35
+      }, this),
+      /* @__PURE__ */ jsxDEV("form", { className: "admin-login-form", onSubmit: submit, noValidate: true, children: [
+        /* @__PURE__ */ jsxDEV(
+          TextInput,
+          {
+            id: "email",
+            name: "email",
+            type: "email",
+            label: "Email address",
+            value: values.email,
+            error: errors.email,
+            icon: /* @__PURE__ */ jsxDEV(EmailIcon, {}, void 0, false, {
+              fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+              lineNumber: 104,
+              columnNumber: 23
+            }, this),
+            onChange: updateValue,
+            placeholder: "admin@example.com",
+            autoComplete: "username",
+            autoCapitalize: "none",
+            spellCheck: "false",
+            disabled: submitting
+          },
+          void 0,
+          false,
+          {
+            fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+            lineNumber: 97,
+            columnNumber: 29
+          },
+          this
+        ),
+        /* @__PURE__ */ jsxDEV(
+          TextInput,
+          {
+            id: "password",
+            name: "password",
+            type: showPassword ? "text" : "password",
+            label: "Password",
+            value: values.password,
+            error: errors.password,
+            icon: /* @__PURE__ */ jsxDEV(LockIcon, {}, void 0, false, {
+              fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+              lineNumber: 119,
+              columnNumber: 23
+            }, this),
+            onChange: updateValue,
+            placeholder: "Enter your password",
+            autoComplete: "current-password",
+            disabled: submitting,
+            action: /* @__PURE__ */ jsxDEV("button", { type: "button", onClick: () => setShowPassword((current) => !current), "aria-label": showPassword ? "Hide password" : "Show password", children: /* @__PURE__ */ jsxDEV(EyeIcon, { hidden: showPassword }, void 0, false, {
+              fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+              lineNumber: 126,
+              columnNumber: 41
+            }, this) }, void 0, false, {
+              fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+              lineNumber: 125,
+              columnNumber: 17
+            }, this)
+          },
+          void 0,
+          false,
+          {
+            fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+            lineNumber: 112,
+            columnNumber: 29
+          },
+          this
+        ),
+        /* @__PURE__ */ jsxDEV(Button, { type: "submit", fullWidth: true, loading: submitting, children: [
+          "Sign in securely ",
+          /* @__PURE__ */ jsxDEV("span", { "aria-hidden": "true", children: "→" }, void 0, false, {
+            fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+            lineNumber: 130,
+            columnNumber: 99
+          }, this)
+        ] }, void 0, true, {
+          fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+          lineNumber: 130,
+          columnNumber: 29
+        }, this)
+      ] }, void 0, true, {
+        fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+        lineNumber: 96,
+        columnNumber: 25
+      }, this),
+      /* @__PURE__ */ jsxDEV("p", { className: "admin-security-note", children: [
+        /* @__PURE__ */ jsxDEV("span", { "aria-hidden": "true", children: "◆" }, void 0, false, {
+          fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+          lineNumber: 133,
+          columnNumber: 60
+        }, this),
+        " Protected by secure sessions and login attempt limits."
+      ] }, void 0, true, {
+        fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+        lineNumber: 133,
+        columnNumber: 25
+      }, this)
+    ] }, void 0, true, {
+      fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+      lineNumber: 86,
+      columnNumber: 21
+    }, this) }, void 0, false, {
+      fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+      lineNumber: 85,
+      columnNumber: 17
+    }, this)
+  ] }, void 0, true, {
+    fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+    lineNumber: 75,
+    columnNumber: 13
+  }, this) }, void 0, false, {
+    fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+    lineNumber: 74,
+    columnNumber: 5
+  }, this);
+}
+_s(LoginPage, "D66SRBOjkDQIgW3mVA43t1M0x5E=");
+_c4 = LoginPage;
+function DashboardPage({ user, logoutUrl }) {
+  _s2();
+  const [submitting, setSubmitting] = useState(false);
+  const [alert, setAlert] = useState(null);
+  const logout = async () => {
+    setSubmitting(true);
+    setAlert(null);
+    try {
+      const response = await window.axios.post(logoutUrl, {}, { headers: { Accept: "application/json" } });
+      window.location.assign(response.data.redirect);
+    } catch (error) {
+      setAlert({ variant: "error", message: error.response?.data?.message ?? "Unable to sign out. Please try again." });
+      setSubmitting(false);
+    }
+  };
+  return /* @__PURE__ */ jsxDEV("main", { className: "admin-dashboard-shell", children: [
+    /* @__PURE__ */ jsxDEV("header", { className: "admin-topbar", children: [
+      /* @__PURE__ */ jsxDEV(BrandMark, { compact: true }, void 0, false, {
+        fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+        lineNumber: 160,
+        columnNumber: 17
+      }, this),
+      /* @__PURE__ */ jsxDEV("div", { className: "admin-topbar__account", children: [
+        /* @__PURE__ */ jsxDEV("span", { className: "admin-avatar", children: user.name.slice(0, 1).toUpperCase() }, void 0, false, {
+          fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+          lineNumber: 162,
+          columnNumber: 21
+        }, this),
+        /* @__PURE__ */ jsxDEV("span", { children: [
+          /* @__PURE__ */ jsxDEV("strong", { children: user.name }, void 0, false, {
+            fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+            lineNumber: 163,
+            columnNumber: 27
+          }, this),
+          /* @__PURE__ */ jsxDEV("small", { children: user.email }, void 0, false, {
+            fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+            lineNumber: 163,
+            columnNumber: 55
+          }, this)
+        ] }, void 0, true, {
+          fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+          lineNumber: 163,
+          columnNumber: 21
+        }, this),
+        /* @__PURE__ */ jsxDEV(Button, { type: "button", variant: "secondary", loading: submitting, onClick: logout, children: "Sign out" }, void 0, false, {
+          fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+          lineNumber: 164,
+          columnNumber: 21
+        }, this)
+      ] }, void 0, true, {
+        fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+        lineNumber: 161,
+        columnNumber: 17
+      }, this)
+    ] }, void 0, true, {
+      fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+      lineNumber: 159,
+      columnNumber: 13
+    }, this),
+    /* @__PURE__ */ jsxDEV("section", { className: "admin-dashboard-content", children: [
+      alert && /* @__PURE__ */ jsxDEV(Alert, { variant: alert.variant, message: alert.message, onDismiss: () => setAlert(null) }, void 0, false, {
+        fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+        lineNumber: 169,
+        columnNumber: 27
+      }, this),
+      /* @__PURE__ */ jsxDEV("div", { className: "dashboard-welcome", children: [
+        /* @__PURE__ */ jsxDEV("div", { children: [
+          /* @__PURE__ */ jsxDEV("p", { className: "eyebrow", children: "Royal celebration manager" }, void 0, false, {
+            fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+            lineNumber: 171,
+            columnNumber: 26
+          }, this),
+          /* @__PURE__ */ jsxDEV("h1", { children: [
+            "Welcome, ",
+            user.name
+          ] }, void 0, true, {
+            fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+            lineNumber: 171,
+            columnNumber: 78
+          }, this),
+          /* @__PURE__ */ jsxDEV("p", { children: "Your secure admin workspace is ready." }, void 0, false, {
+            fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+            lineNumber: 171,
+            columnNumber: 107
+          }, this)
+        ] }, void 0, true, {
+          fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+          lineNumber: 171,
+          columnNumber: 21
+        }, this),
+        /* @__PURE__ */ jsxDEV("span", { className: "dashboard-welcome__crown", "aria-hidden": "true", children: "♛" }, void 0, false, {
+          fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+          lineNumber: 172,
+          columnNumber: 21
+        }, this)
+      ] }, void 0, true, {
+        fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+        lineNumber: 170,
+        columnNumber: 17
+      }, this),
+      /* @__PURE__ */ jsxDEV("div", { className: "dashboard-stat-grid", children: [
+        /* @__PURE__ */ jsxDEV("article", { children: [
+          /* @__PURE__ */ jsxDEV("span", { children: "Invitations" }, void 0, false, {
+            fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+            lineNumber: 175,
+            columnNumber: 30
+          }, this),
+          /* @__PURE__ */ jsxDEV("strong", { children: "—" }, void 0, false, {
+            fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+            lineNumber: 175,
+            columnNumber: 54
+          }, this),
+          /* @__PURE__ */ jsxDEV("small", { children: "Ready for the CMS module" }, void 0, false, {
+            fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+            lineNumber: 175,
+            columnNumber: 72
+          }, this)
+        ] }, void 0, true, {
+          fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+          lineNumber: 175,
+          columnNumber: 21
+        }, this),
+        /* @__PURE__ */ jsxDEV("article", { children: [
+          /* @__PURE__ */ jsxDEV("span", { children: "Attending" }, void 0, false, {
+            fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+            lineNumber: 176,
+            columnNumber: 30
+          }, this),
+          /* @__PURE__ */ jsxDEV("strong", { children: "—" }, void 0, false, {
+            fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+            lineNumber: 176,
+            columnNumber: 52
+          }, this),
+          /* @__PURE__ */ jsxDEV("small", { children: "Responses will appear here" }, void 0, false, {
+            fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+            lineNumber: 176,
+            columnNumber: 70
+          }, this)
+        ] }, void 0, true, {
+          fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+          lineNumber: 176,
+          columnNumber: 21
+        }, this),
+        /* @__PURE__ */ jsxDEV("article", { children: [
+          /* @__PURE__ */ jsxDEV("span", { children: "Declined" }, void 0, false, {
+            fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+            lineNumber: 177,
+            columnNumber: 30
+          }, this),
+          /* @__PURE__ */ jsxDEV("strong", { children: "—" }, void 0, false, {
+            fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+            lineNumber: 177,
+            columnNumber: 51
+          }, this),
+          /* @__PURE__ */ jsxDEV("small", { children: "Responses will appear here" }, void 0, false, {
+            fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+            lineNumber: 177,
+            columnNumber: 69
+          }, this)
+        ] }, void 0, true, {
+          fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+          lineNumber: 177,
+          columnNumber: 21
+        }, this)
+      ] }, void 0, true, {
+        fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+        lineNumber: 174,
+        columnNumber: 17
+      }, this)
+    ] }, void 0, true, {
+      fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+      lineNumber: 168,
+      columnNumber: 13
+    }, this)
+  ] }, void 0, true, {
+    fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+    lineNumber: 158,
+    columnNumber: 5
+  }, this);
+}
+_s2(DashboardPage, "yI55xsGPt3mIAJzVqfXSy5zDyco=");
+_c5 = DashboardPage;
+const rootElement = document.getElementById("admin-app");
+const page = rootElement.dataset.page;
+const payload = JSON.parse(rootElement.dataset.payload || "{}");
+const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+window.axios.defaults.headers.common["X-CSRF-TOKEN"] = csrfToken;
+createRoot(rootElement).render(page === "dashboard" ? /* @__PURE__ */ jsxDEV(DashboardPage, { ...payload }, void 0, false, {
+  fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+  lineNumber: 190,
+  columnNumber: 55
+}, this) : /* @__PURE__ */ jsxDEV(LoginPage, { ...payload }, void 0, false, {
+  fileName: "C:/xampp/htdocs/RSVP/resources/js/admin.jsx",
+  lineNumber: 190,
+  columnNumber: 88
+}, this));
+var _c, _c2, _c3, _c4, _c5;
+$RefreshReg$(_c, "EmailIcon");
+$RefreshReg$(_c2, "LockIcon");
+$RefreshReg$(_c3, "EyeIcon");
+$RefreshReg$(_c4, "LoginPage");
+$RefreshReg$(_c5, "DashboardPage");
+import * as RefreshRuntime from "/@react-refresh";
+const inWebWorker = typeof WorkerGlobalScope !== "undefined" && self instanceof WorkerGlobalScope;
+if (import.meta.hot && !inWebWorker) {
+  if (!window.$RefreshReg$) {
+    throw new Error(
+      "@vitejs/plugin-react can't detect preamble. Something is wrong."
+    );
+  }
+  RefreshRuntime.__hmr_import(import.meta.url).then((currentExports) => {
+    RefreshRuntime.registerExportsForReactRefresh("C:/xampp/htdocs/RSVP/resources/js/admin.jsx", currentExports);
+    import.meta.hot.accept((nextExports) => {
+      if (!nextExports) return;
+      const invalidateMessage = RefreshRuntime.validateRefreshBoundaryAndEnqueueUpdate("C:/xampp/htdocs/RSVP/resources/js/admin.jsx", currentExports, nextExports);
+      if (invalidateMessage) import.meta.hot.invalidate(invalidateMessage);
+    });
+  });
+}
+function $RefreshReg$(type, id) {
+  return RefreshRuntime.register(type, "C:/xampp/htdocs/RSVP/resources/js/admin.jsx " + id);
+}
+function $RefreshSig$() {
+  return RefreshRuntime.createSignatureFunctionForTransform();
+}
+
+//# sourceMappingURL=data:application/json;base64,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QUFBQSxTQXNCQTtBQUVSO0FBQUNtQyxJQXpDUUgsZUFBYTtBQUFBLE1BQWJBO0FBMkNULE1BQU1PLGNBQWNDLFNBQVNDLGVBQWUsV0FBVztBQUN2RCxNQUFNQyxPQUFPSCxZQUFZSSxRQUFRRDtBQUNqQyxNQUFNRSxVQUFVQyxLQUFLQyxNQUFNUCxZQUFZSSxRQUFRQyxXQUFXLElBQUk7QUFDOUQsTUFBTUcsWUFBWVAsU0FBU1EsY0FBYyx5QkFBeUIsR0FBR0M7QUFDckVsQyxPQUFPQyxNQUFNa0MsU0FBU2hDLFFBQVFpQyxPQUFPLGNBQWMsSUFBSUo7QUFFdkRqRixXQUFXeUUsV0FBVyxFQUFFYSxPQUFPVixTQUFTLGNBQWMsdUJBQUMsaUJBQWMsR0FBSUUsV0FBbkI7QUFBQTtBQUFBO0FBQUE7QUFBQSxPQUEyQixJQUFNLHVCQUFDLGFBQVUsR0FBSUEsV0FBZjtBQUFBO0FBQUE7QUFBQTtBQUFBLE9BQXVCLENBQUc7QUFBRSxJQUFBeEUsSUFBQUUsS0FBQUcsS0FBQTRFLEtBQUFDO0FBQUEsYUFBQWxGLElBQUE7QUFBQSxhQUFBRSxLQUFBO0FBQUEsYUFBQUcsS0FBQTtBQUFBLGFBQUE0RSxLQUFBO0FBQUEsYUFBQUMsS0FBQSIsIm5hbWVzIjpbIlJlYWN0IiwidXNlU3RhdGUiLCJjcmVhdGVSb290IiwiQWxlcnQiLCJCcmFuZE1hcmsiLCJCdXR0b24iLCJUZXh0SW5wdXQiLCJFbWFpbEljb24iLCJfYyIsIkxvY2tJY29uIiwiX2MyIiwiRXllSWNvbiIsImhpZGRlbiIsIl9jMyIsIkxvZ2luUGFnZSIsImxvZ2luVXJsIiwiZmxhc2giLCJfcyIsInZhbHVlcyIsInNldFZhbHVlcyIsImVtYWlsIiwicGFzc3dvcmQiLCJlcnJvcnMiLCJzZXRFcnJvcnMiLCJzaG93UGFzc3dvcmQiLCJzZXRTaG93UGFzc3dvcmQiLCJzdWJtaXR0aW5nIiwic2V0U3VibWl0dGluZyIsImFsZXJ0Iiwic2V0QWxlcnQiLCJlcnJvciIsInZhcmlhbnQiLCJtZXNzYWdlIiwic3VjY2VzcyIsInVwZGF0ZVZhbHVlIiwiZXZlbnQiLCJuYW1lIiwidmFsdWUiLCJ0YXJnZXQiLCJjdXJyZW50IiwidW5kZWZpbmVkIiwidmFsaWRhdGUiLCJuZXh0RXJyb3JzIiwidHJpbSIsInRlc3QiLCJPYmplY3QiLCJrZXlzIiwibGVuZ3RoIiwic3VibWl0IiwicHJldmVudERlZmF1bHQiLCJyZXNwb25zZSIsIndpbmRvdyIsImF4aW9zIiwicG9zdCIsImhlYWRlcnMiLCJBY2NlcHQiLCJkYXRhIiwic2V0VGltZW91dCIsImxvY2F0aW9uIiwiYXNzaWduIiwicmVkaXJlY3QiLCJzdGF0dXMiLCJyZXNwb25zZUVycm9ycyIsImZyb21FbnRyaWVzIiwiZW50cmllcyIsIm1hcCIsImtleSIsIm1lc3NhZ2VzIiwiRGFzaGJvYXJkUGFnZSIsInVzZXIiLCJsb2dvdXRVcmwiLCJfczIiLCJsb2dvdXQiLCJzbGljZSIsInRvVXBwZXJDYXNlIiwicm9vdEVsZW1lbnQiLCJkb2N1bWVudCIsImdldEVsZW1lbnRCeUlkIiwicGFnZSIsImRhdGFzZXQiLCJwYXlsb2FkIiwiSlNPTiIsInBhcnNlIiwiY3NyZlRva2VuIiwicXVlcnlTZWxlY3RvciIsImNvbnRlbnQiLCJkZWZhdWx0cyIsImNvbW1vbiIsInJlbmRlciIsIl9jNCIsIl9jNSJdLCJpZ25vcmVMaXN0IjpbXSwic291cmNlcyI6WyJhZG1pbi5qc3giXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0ICcuL2Jvb3RzdHJhcCc7XG5pbXBvcnQgUmVhY3QsIHsgdXNlU3RhdGUgfSBmcm9tICdyZWFjdCc7XG5pbXBvcnQgeyBjcmVhdGVSb290IH0gZnJvbSAncmVhY3QtZG9tL2NsaWVudCc7XG5pbXBvcnQgQWxlcnQgZnJvbSAnLi9jb21wb25lbnRzL3VpL0FsZXJ0JztcbmltcG9ydCBCcmFuZE1hcmsgZnJvbSAnLi9jb21wb25lbnRzL3VpL0JyYW5kTWFyayc7XG5pbXBvcnQgQnV0dG9uIGZyb20gJy4vY29tcG9uZW50cy91aS9CdXR0b24nO1xuaW1wb3J0IFRleHRJbnB1dCBmcm9tICcuL2NvbXBvbmVudHMvdWkvVGV4dElucHV0JztcblxuY29uc3QgRW1haWxJY29uID0gKCkgPT4gKFxuICAgIDxzdmcgdmlld0JveD1cIjAgMCAyNCAyNFwiIGFyaWEtaGlkZGVuPVwidHJ1ZVwiPjxwYXRoIGQ9XCJNNCA0aDE2YTIgMiAwIDAgMSAyIDJ2MTJhMiAyIDAgMCAxLTIgMkg0YTIgMiAwIDAgMS0yLTJWNmEyIDIgMCAwIDEgMi0yWm0xOCAyLTEwIDdMMiA2XCIgLz48L3N2Zz5cbik7XG5cbmNvbnN0IExvY2tJY29uID0gKCkgPT4gKFxuICAgIDxzdmcgdmlld0JveD1cIjAgMCAyNCAyNFwiIGFyaWEtaGlkZGVuPVwidHJ1ZVwiPjxwYXRoIGQ9XCJNNSAxMWgxNHYxMEg1VjExWm0zIDBWN2E0IDQgMCAwIDEgOCAwdjRcIiAvPjwvc3ZnPlxuKTtcblxuY29uc3QgRXllSWNvbiA9ICh7IGhpZGRlbiB9KSA9PiAoXG4gICAgPHN2ZyB2aWV3Qm94PVwiMCAwIDI0IDI0XCIgYXJpYS1oaWRkZW49XCJ0cnVlXCI+XG4gICAgICAgIDxwYXRoIGQ9XCJNMiAxMnMzLjUtNiAxMC02IDEwIDYgMTAgNi0zLjUgNi0xMCA2UzIgMTIgMiAxMlpcIiAvPlxuICAgICAgICA8Y2lyY2xlIGN4PVwiMTJcIiBjeT1cIjEyXCIgcj1cIjIuNVwiIC8+XG4gICAgICAgIHtoaWRkZW4gJiYgPHBhdGggZD1cIm00IDQgMTYgMTZcIiAvPn1cbiAgICA8L3N2Zz5cbik7XG5cbmZ1bmN0aW9uIExvZ2luUGFnZSh7IGxvZ2luVXJsLCBmbGFzaCA9IHt9IH0pIHtcbiAgICBjb25zdCBbdmFsdWVzLCBzZXRWYWx1ZXNdID0gdXNlU3RhdGUoeyBlbWFpbDogJycsIHBhc3N3b3JkOiAnJyB9KTtcbiAgICBjb25zdCBbZXJyb3JzLCBzZXRFcnJvcnNdID0gdXNlU3RhdGUoe30pO1xuICAgIGNvbnN0IFtzaG93UGFzc3dvcmQsIHNldFNob3dQYXNzd29yZF0gPSB1c2VTdGF0ZShmYWxzZSk7XG4gICAgY29uc3QgW3N1Ym1pdHRpbmcsIHNldFN1Ym1pdHRpbmddID0gdXNlU3RhdGUoZmFsc2UpO1xuICAgIGNvbnN0IFthbGVydCwgc2V0QWxlcnRdID0gdXNlU3RhdGUoXG4gICAgICAgIGZsYXNoLmVycm9yID8geyB2YXJpYW50OiAnZXJyb3InLCBtZXNzYWdlOiBmbGFzaC5lcnJvciB9IDogZmxhc2guc3VjY2VzcyA/IHsgdmFyaWFudDogJ3N1Y2Nlc3MnLCBtZXNzYWdlOiBmbGFzaC5zdWNjZXNzIH0gOiBudWxsLFxuICAgICk7XG5cbiAgICBjb25zdCB1cGRhdGVWYWx1ZSA9IChldmVudCkgPT4ge1xuICAgICAgICBjb25zdCB7IG5hbWUsIHZhbHVlIH0gPSBldmVudC50YXJnZXQ7XG4gICAgICAgIHNldFZhbHVlcygoY3VycmVudCkgPT4gKHsgLi4uY3VycmVudCwgW25hbWVdOiB2YWx1ZSB9KSk7XG4gICAgICAgIHNldEVycm9ycygoY3VycmVudCkgPT4gKHsgLi4uY3VycmVudCwgW25hbWVdOiB1bmRlZmluZWQgfSkpO1xuICAgIH07XG5cbiAgICBjb25zdCB2YWxpZGF0ZSA9ICgpID0+IHtcbiAgICAgICAgY29uc3QgbmV4dEVycm9ycyA9IHt9O1xuICAgICAgICBpZiAoIXZhbHVlcy5lbWFpbC50cmltKCkpIG5leHRFcnJvcnMuZW1haWwgPSAnRW1haWwgYWRkcmVzcyBpcyByZXF1aXJlZC4nO1xuICAgICAgICBlbHNlIGlmICghL15cXFMrQFxcUytcXC5cXFMrJC8udGVzdCh2YWx1ZXMuZW1haWwpKSBuZXh0RXJyb3JzLmVtYWlsID0gJ0VudGVyIGEgdmFsaWQgZW1haWwgYWRkcmVzcy4nO1xuICAgICAgICBpZiAoIXZhbHVlcy5wYXNzd29yZCkgbmV4dEVycm9ycy5wYXNzd29yZCA9ICdQYXNzd29yZCBpcyByZXF1aXJlZC4nO1xuICAgICAgICBzZXRFcnJvcnMobmV4dEVycm9ycyk7XG4gICAgICAgIHJldHVybiBPYmplY3Qua2V5cyhuZXh0RXJyb3JzKS5sZW5ndGggPT09IDA7XG4gICAgfTtcblxuICAgIGNvbnN0IHN1Ym1pdCA9IGFzeW5jIChldmVudCkgPT4ge1xuICAgICAgICBldmVudC5wcmV2ZW50RGVmYXVsdCgpO1xuICAgICAgICBzZXRBbGVydChudWxsKTtcbiAgICAgICAgaWYgKCF2YWxpZGF0ZSgpKSByZXR1cm47XG5cbiAgICAgICAgc2V0U3VibWl0dGluZyh0cnVlKTtcbiAgICAgICAgdHJ5IHtcbiAgICAgICAgICAgIGNvbnN0IHJlc3BvbnNlID0gYXdhaXQgd2luZG93LmF4aW9zLnBvc3QobG9naW5VcmwsIHZhbHVlcywgeyBoZWFkZXJzOiB7IEFjY2VwdDogJ2FwcGxpY2F0aW9uL2pzb24nIH0gfSk7XG4gICAgICAgICAgICBzZXRBbGVydCh7IHZhcmlhbnQ6ICdzdWNjZXNzJywgbWVzc2FnZTogcmVzcG9uc2UuZGF0YS5tZXNzYWdlIH0pO1xuICAgICAgICAgICAgd2luZG93LnNldFRpbWVvdXQoKCkgPT4gd2luZG93LmxvY2F0aW9uLmFzc2lnbihyZXNwb25zZS5kYXRhLnJlZGlyZWN0KSwgNDUwKTtcbiAgICAgICAgfSBjYXRjaCAoZXJyb3IpIHtcbiAgICAgICAgICAgIGNvbnN0IHN0YXR1cyA9IGVycm9yLnJlc3BvbnNlPy5zdGF0dXM7XG4gICAgICAgICAgICBjb25zdCByZXNwb25zZUVycm9ycyA9IGVycm9yLnJlc3BvbnNlPy5kYXRhPy5lcnJvcnMgPz8ge307XG4gICAgICAgICAgICBzZXRFcnJvcnMoT2JqZWN0LmZyb21FbnRyaWVzKE9iamVjdC5lbnRyaWVzKHJlc3BvbnNlRXJyb3JzKS5tYXAoKFtrZXksIG1lc3NhZ2VzXSkgPT4gW2tleSwgbWVzc2FnZXNbMF1dKSkpO1xuXG4gICAgICAgICAgICBsZXQgbWVzc2FnZSA9IGVycm9yLnJlc3BvbnNlPy5kYXRhPy5tZXNzYWdlID8/ICdXZSBjb3VsZCBub3Qgc2lnbiB5b3UgaW4uIFBsZWFzZSB0cnkgYWdhaW4uJztcbiAgICAgICAgICAgIGlmIChzdGF0dXMgPT09IDQyMiAmJiByZXNwb25zZUVycm9ycy5lbWFpbCkgbWVzc2FnZSA9ICdUaGUgZW1haWwgb3IgcGFzc3dvcmQgaXMgaW5jb3JyZWN0LCBvciB0aGUgYWNjb3VudCBpcyBpbmFjdGl2ZS4nO1xuICAgICAgICAgICAgaWYgKHN0YXR1cyA9PT0gNDE5KSBtZXNzYWdlID0gJ1lvdXIgc2VjdXJlIHNlc3Npb24gZXhwaXJlZC4gUmVmcmVzaCB0aGUgcGFnZSBhbmQgdHJ5IGFnYWluLic7XG4gICAgICAgICAgICBzZXRBbGVydCh7IHZhcmlhbnQ6ICdlcnJvcicsIG1lc3NhZ2UgfSk7XG4gICAgICAgIH0gZmluYWxseSB7XG4gICAgICAgICAgICBzZXRTdWJtaXR0aW5nKGZhbHNlKTtcbiAgICAgICAgfVxuICAgIH07XG5cbiAgICByZXR1cm4gKFxuICAgICAgICA8bWFpbiBjbGFzc05hbWU9XCJhZG1pbi1hdXRoLXNoZWxsXCI+XG4gICAgICAgICAgICA8c2VjdGlvbiBjbGFzc05hbWU9XCJhZG1pbi1hdXRoLWNhcmRcIj5cbiAgICAgICAgICAgICAgICA8YXNpZGUgY2xhc3NOYW1lPVwiYWRtaW4tYXV0aC1hcnRcIj5cbiAgICAgICAgICAgICAgICAgICAgPGltZyBzcmM9XCIvaW1hZ2VzL3JzdnBfZ2FpYS5wbmdcIiBhbHQ9XCJHYWlh4oCZcyBGYWlyeXRhbGUgTGFuZCBiaXJ0aGRheSBpbnZpdGF0aW9uXCIgLz5cbiAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJhZG1pbi1hdXRoLWFydF9fb3ZlcmxheVwiPlxuICAgICAgICAgICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPVwiYWRtaW4tYXV0aC1hcnRfX2JhZGdlXCI+UHJpdmF0ZSBhZG1pbmlzdHJhdGlvbjwvc3Bhbj5cbiAgICAgICAgICAgICAgICAgICAgICAgIDxoMT5FdmVyeSByb3lhbCBndWVzdCw8YnIgLz5iZWF1dGlmdWxseSBvcmdhbml6ZWQuPC9oMT5cbiAgICAgICAgICAgICAgICAgICAgICAgIDxwPk1hbmFnZSBpbnZpdGF0aW9ucyBhbmQgcmVzcG9uc2VzIGZyb20gb25lIHNlY3VyZSBwbGFjZS48L3A+XG4gICAgICAgICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICAgIDwvYXNpZGU+XG5cbiAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImFkbWluLWF1dGgtZm9ybS1wYW5lbFwiPlxuICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImFkbWluLWF1dGgtZm9ybS13cmFwXCI+XG4gICAgICAgICAgICAgICAgICAgICAgICA8QnJhbmRNYXJrIC8+XG4gICAgICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImFkbWluLWF1dGgtaGVhZGluZ1wiPlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT1cImV5ZWJyb3dcIj5XZWxjb21lIGJhY2s8L3A+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgPGgyPlNpZ24gaW4gdG8geW91ciBkYXNoYm9hcmQ8L2gyPlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxwPlVzZSB5b3VyIGFkbWluaXN0cmF0b3IgZW1haWwgYW5kIHBhc3N3b3JkLjwvcD5cbiAgICAgICAgICAgICAgICAgICAgICAgIDwvZGl2PlxuXG4gICAgICAgICAgICAgICAgICAgICAgICB7YWxlcnQgJiYgPEFsZXJ0IHZhcmlhbnQ9e2FsZXJ0LnZhcmlhbnR9IG1lc3NhZ2U9e2FsZXJ0Lm1lc3NhZ2V9IG9uRGlzbWlzcz17KCkgPT4gc2V0QWxlcnQobnVsbCl9IC8+fVxuXG4gICAgICAgICAgICAgICAgICAgICAgICA8Zm9ybSBjbGFzc05hbWU9XCJhZG1pbi1sb2dpbi1mb3JtXCIgb25TdWJtaXQ9e3N1Ym1pdH0gbm9WYWxpZGF0ZT5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8VGV4dElucHV0XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGlkPVwiZW1haWxcIlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBuYW1lPVwiZW1haWxcIlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB0eXBlPVwiZW1haWxcIlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBsYWJlbD1cIkVtYWlsIGFkZHJlc3NcIlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB2YWx1ZT17dmFsdWVzLmVtYWlsfVxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBlcnJvcj17ZXJyb3JzLmVtYWlsfVxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBpY29uPXs8RW1haWxJY29uIC8+fVxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBvbkNoYW5nZT17dXBkYXRlVmFsdWV9XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHBsYWNlaG9sZGVyPVwiYWRtaW5AZXhhbXBsZS5jb21cIlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBhdXRvQ29tcGxldGU9XCJ1c2VybmFtZVwiXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGF1dG9DYXBpdGFsaXplPVwibm9uZVwiXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHNwZWxsQ2hlY2s9XCJmYWxzZVwiXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGRpc2FibGVkPXtzdWJtaXR0aW5nfVxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIC8+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgPFRleHRJbnB1dFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBpZD1cInBhc3N3b3JkXCJcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgbmFtZT1cInBhc3N3b3JkXCJcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgdHlwZT17c2hvd1Bhc3N3b3JkID8gJ3RleHQnIDogJ3Bhc3N3b3JkJ31cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgbGFiZWw9XCJQYXNzd29yZFwiXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHZhbHVlPXt2YWx1ZXMucGFzc3dvcmR9XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGVycm9yPXtlcnJvcnMucGFzc3dvcmR9XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGljb249ezxMb2NrSWNvbiAvPn1cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgb25DaGFuZ2U9e3VwZGF0ZVZhbHVlfVxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBwbGFjZWhvbGRlcj1cIkVudGVyIHlvdXIgcGFzc3dvcmRcIlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBhdXRvQ29tcGxldGU9XCJjdXJyZW50LXBhc3N3b3JkXCJcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZGlzYWJsZWQ9e3N1Ym1pdHRpbmd9XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGFjdGlvbj17KFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPGJ1dHRvbiB0eXBlPVwiYnV0dG9uXCIgb25DbGljaz17KCkgPT4gc2V0U2hvd1Bhc3N3b3JkKChjdXJyZW50KSA9PiAhY3VycmVudCl9IGFyaWEtbGFiZWw9e3Nob3dQYXNzd29yZCA/ICdIaWRlIHBhc3N3b3JkJyA6ICdTaG93IHBhc3N3b3JkJ30+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPEV5ZUljb24gaGlkZGVuPXtzaG93UGFzc3dvcmR9IC8+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8L2J1dHRvbj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgKX1cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAvPlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxCdXR0b24gdHlwZT1cInN1Ym1pdFwiIGZ1bGxXaWR0aCBsb2FkaW5nPXtzdWJtaXR0aW5nfT5TaWduIGluIHNlY3VyZWx5IDxzcGFuIGFyaWEtaGlkZGVuPVwidHJ1ZVwiPuKGkjwvc3Bhbj48L0J1dHRvbj5cbiAgICAgICAgICAgICAgICAgICAgICAgIDwvZm9ybT5cblxuICAgICAgICAgICAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPVwiYWRtaW4tc2VjdXJpdHktbm90ZVwiPjxzcGFuIGFyaWEtaGlkZGVuPVwidHJ1ZVwiPuKXhjwvc3Bhbj4gUHJvdGVjdGVkIGJ5IHNlY3VyZSBzZXNzaW9ucyBhbmQgbG9naW4gYXR0ZW1wdCBsaW1pdHMuPC9wPlxuICAgICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgIDwvc2VjdGlvbj5cbiAgICAgICAgPC9tYWluPlxuICAgICk7XG59XG5cbmZ1bmN0aW9uIERhc2hib2FyZFBhZ2UoeyB1c2VyLCBsb2dvdXRVcmwgfSkge1xuICAgIGNvbnN0IFtzdWJtaXR0aW5nLCBzZXRTdWJtaXR0aW5nXSA9IHVzZVN0YXRlKGZhbHNlKTtcbiAgICBjb25zdCBbYWxlcnQsIHNldEFsZXJ0XSA9IHVzZVN0YXRlKG51bGwpO1xuXG4gICAgY29uc3QgbG9nb3V0ID0gYXN5bmMgKCkgPT4ge1xuICAgICAgICBzZXRTdWJtaXR0aW5nKHRydWUpO1xuICAgICAgICBzZXRBbGVydChudWxsKTtcbiAgICAgICAgdHJ5IHtcbiAgICAgICAgICAgIGNvbnN0IHJlc3BvbnNlID0gYXdhaXQgd2luZG93LmF4aW9zLnBvc3QobG9nb3V0VXJsLCB7fSwgeyBoZWFkZXJzOiB7IEFjY2VwdDogJ2FwcGxpY2F0aW9uL2pzb24nIH0gfSk7XG4gICAgICAgICAgICB3aW5kb3cubG9jYXRpb24uYXNzaWduKHJlc3BvbnNlLmRhdGEucmVkaXJlY3QpO1xuICAgICAgICB9IGNhdGNoIChlcnJvcikge1xuICAgICAgICAgICAgc2V0QWxlcnQoeyB2YXJpYW50OiAnZXJyb3InLCBtZXNzYWdlOiBlcnJvci5yZXNwb25zZT8uZGF0YT8ubWVzc2FnZSA/PyAnVW5hYmxlIHRvIHNpZ24gb3V0LiBQbGVhc2UgdHJ5IGFnYWluLicgfSk7XG4gICAgICAgICAgICBzZXRTdWJtaXR0aW5nKGZhbHNlKTtcbiAgICAgICAgfVxuICAgIH07XG5cbiAgICByZXR1cm4gKFxuICAgICAgICA8bWFpbiBjbGFzc05hbWU9XCJhZG1pbi1kYXNoYm9hcmQtc2hlbGxcIj5cbiAgICAgICAgICAgIDxoZWFkZXIgY2xhc3NOYW1lPVwiYWRtaW4tdG9wYmFyXCI+XG4gICAgICAgICAgICAgICAgPEJyYW5kTWFyayBjb21wYWN0IC8+XG4gICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJhZG1pbi10b3BiYXJfX2FjY291bnRcIj5cbiAgICAgICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPVwiYWRtaW4tYXZhdGFyXCI+e3VzZXIubmFtZS5zbGljZSgwLCAxKS50b1VwcGVyQ2FzZSgpfTwvc3Bhbj5cbiAgICAgICAgICAgICAgICAgICAgPHNwYW4+PHN0cm9uZz57dXNlci5uYW1lfTwvc3Ryb25nPjxzbWFsbD57dXNlci5lbWFpbH08L3NtYWxsPjwvc3Bhbj5cbiAgICAgICAgICAgICAgICAgICAgPEJ1dHRvbiB0eXBlPVwiYnV0dG9uXCIgdmFyaWFudD1cInNlY29uZGFyeVwiIGxvYWRpbmc9e3N1Ym1pdHRpbmd9IG9uQ2xpY2s9e2xvZ291dH0+U2lnbiBvdXQ8L0J1dHRvbj5cbiAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgIDwvaGVhZGVyPlxuXG4gICAgICAgICAgICA8c2VjdGlvbiBjbGFzc05hbWU9XCJhZG1pbi1kYXNoYm9hcmQtY29udGVudFwiPlxuICAgICAgICAgICAgICAgIHthbGVydCAmJiA8QWxlcnQgdmFyaWFudD17YWxlcnQudmFyaWFudH0gbWVzc2FnZT17YWxlcnQubWVzc2FnZX0gb25EaXNtaXNzPXsoKSA9PiBzZXRBbGVydChudWxsKX0gLz59XG4gICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJkYXNoYm9hcmQtd2VsY29tZVwiPlxuICAgICAgICAgICAgICAgICAgICA8ZGl2PjxwIGNsYXNzTmFtZT1cImV5ZWJyb3dcIj5Sb3lhbCBjZWxlYnJhdGlvbiBtYW5hZ2VyPC9wPjxoMT5XZWxjb21lLCB7dXNlci5uYW1lfTwvaDE+PHA+WW91ciBzZWN1cmUgYWRtaW4gd29ya3NwYWNlIGlzIHJlYWR5LjwvcD48L2Rpdj5cbiAgICAgICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPVwiZGFzaGJvYXJkLXdlbGNvbWVfX2Nyb3duXCIgYXJpYS1oaWRkZW49XCJ0cnVlXCI+4pmbPC9zcGFuPlxuICAgICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiZGFzaGJvYXJkLXN0YXQtZ3JpZFwiPlxuICAgICAgICAgICAgICAgICAgICA8YXJ0aWNsZT48c3Bhbj5JbnZpdGF0aW9uczwvc3Bhbj48c3Ryb25nPuKAlDwvc3Ryb25nPjxzbWFsbD5SZWFkeSBmb3IgdGhlIENNUyBtb2R1bGU8L3NtYWxsPjwvYXJ0aWNsZT5cbiAgICAgICAgICAgICAgICAgICAgPGFydGljbGU+PHNwYW4+QXR0ZW5kaW5nPC9zcGFuPjxzdHJvbmc+4oCUPC9zdHJvbmc+PHNtYWxsPlJlc3BvbnNlcyB3aWxsIGFwcGVhciBoZXJlPC9zbWFsbD48L2FydGljbGU+XG4gICAgICAgICAgICAgICAgICAgIDxhcnRpY2xlPjxzcGFuPkRlY2xpbmVkPC9zcGFuPjxzdHJvbmc+4oCUPC9zdHJvbmc+PHNtYWxsPlJlc3BvbnNlcyB3aWxsIGFwcGVhciBoZXJlPC9zbWFsbD48L2FydGljbGU+XG4gICAgICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgICA8L3NlY3Rpb24+XG4gICAgICAgIDwvbWFpbj5cbiAgICApO1xufVxuXG5jb25zdCByb290RWxlbWVudCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdhZG1pbi1hcHAnKTtcbmNvbnN0IHBhZ2UgPSByb290RWxlbWVudC5kYXRhc2V0LnBhZ2U7XG5jb25zdCBwYXlsb2FkID0gSlNPTi5wYXJzZShyb290RWxlbWVudC5kYXRhc2V0LnBheWxvYWQgfHwgJ3t9Jyk7XG5jb25zdCBjc3JmVG9rZW4gPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKCdtZXRhW25hbWU9XCJjc3JmLXRva2VuXCJdJyk/LmNvbnRlbnQ7XG53aW5kb3cuYXhpb3MuZGVmYXVsdHMuaGVhZGVycy5jb21tb25bJ1gtQ1NSRi1UT0tFTiddID0gY3NyZlRva2VuO1xuXG5jcmVhdGVSb290KHJvb3RFbGVtZW50KS5yZW5kZXIocGFnZSA9PT0gJ2Rhc2hib2FyZCcgPyA8RGFzaGJvYXJkUGFnZSB7Li4ucGF5bG9hZH0gLz4gOiA8TG9naW5QYWdlIHsuLi5wYXlsb2FkfSAvPik7XG4iXSwiZmlsZSI6IkM6L3hhbXBwL2h0ZG9jcy9SU1ZQL3Jlc291cmNlcy9qcy9hZG1pbi5qc3gifQ==
