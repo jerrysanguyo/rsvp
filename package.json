@@ -3,6 +3,7 @@
     "private": true,
     "type": "module",
     "scripts": {
+        "prebuild": "php -r \"if (is_file('public/hot')) unlink('public/hot');\"",
         "build": "vite build",
         "dev": "vite"
     },
