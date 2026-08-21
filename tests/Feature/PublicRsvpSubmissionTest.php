@@ -111,6 +111,50 @@ class PublicRsvpSubmissionTest extends TestCase
         $this->assertDatabaseMissing('rsvp_participants', ['full_name' => 'Angela Reyes']);
     }
 
+    public function test_participant_names_cannot_be_registered_twice_for_the_same_link(): void
+    {
+        $link = RsvpLink::factory()->create();
+
+        $this->withHeader('X-Idempotency-Key', (string) Str::uuid())
+            ->postJson(route('rsvp.store', $link), [
+                'will_attend' => true,
+                'participants' => [['full_name' => 'Maria Santos']],
+            ])
+            ->assertCreated();
+
+        $this->withHeader('X-Idempotency-Key', (string) Str::uuid())
+            ->postJson(route('rsvp.store', $link), [
+                'will_attend' => true,
+                'participants' => [['full_name' => '  MARIA   santos  ']],
+            ])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('participants');
+
+        $this->assertDatabaseCount('rsvp_responses', 1);
+        $this->assertDatabaseCount('rsvp_participants', 1);
+    }
+
+    public function test_same_participant_name_can_be_used_for_a_different_link(): void
+    {
+        $firstLink = RsvpLink::factory()->create();
+        $secondLink = RsvpLink::factory()->create();
+        $payload = [
+            'will_attend' => true,
+            'participants' => [['full_name' => 'Maria Santos']],
+        ];
+
+        $this->withHeader('X-Idempotency-Key', (string) Str::uuid())
+            ->postJson(route('rsvp.store', $firstLink), $payload)
+            ->assertCreated();
+
+        $this->withHeader('X-Idempotency-Key', (string) Str::uuid())
+            ->postJson(route('rsvp.store', $secondLink), $payload)
+            ->assertCreated();
+
+        $this->assertDatabaseCount('rsvp_responses', 2);
+        $this->assertDatabaseCount('rsvp_participants', 2);
+    }
+
     public function test_closed_links_reject_submissions(): void
     {
         $link = RsvpLink::factory()->create(['is_active' => false]);

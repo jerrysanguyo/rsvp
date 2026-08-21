@@ -34,6 +34,7 @@ class DashboardController extends Controller
                     'invitation' => $participant->response->rsvpLink->title,
                     'submittedAt' => $participant->response->submitted_at->toIso8601String(),
                     'submittedLabel' => $participant->response->submitted_at->format('M j, g:i A'),
+                    'destroy_url' => route('admin.participants.destroy', $participant),
                 ];
             });
 

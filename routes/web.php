@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\RsvpLinkController;
+use App\Http\Controllers\Admin\RsvpParticipantController;
 use App\Http\Controllers\Auth\AdminAuthenticatedSessionController;
 use App\Http\Controllers\PublicRsvpController;
 use Illuminate\Support\Facades\Route;
@@ -30,6 +31,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('rsvp-links', [RsvpLinkController::class, 'store'])->name('rsvp-links.store');
         Route::match(['put', 'patch'], 'rsvp-links/{rsvpLink}', [RsvpLinkController::class, 'update'])->name('rsvp-links.update');
         Route::delete('rsvp-links/{rsvpLink}', [RsvpLinkController::class, 'destroy'])->name('rsvp-links.destroy');
+        Route::delete('participants/{rsvpParticipant}', [RsvpParticipantController::class, 'destroy'])->name('participants.destroy');
         Route::delete('logout', [AdminAuthenticatedSessionController::class, 'destroy'])->name('logout');
     });
 });

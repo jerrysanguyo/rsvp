@@ -3,9 +3,11 @@
 namespace App\Services;
 
 use App\Models\RsvpLink;
+use App\Models\RsvpParticipant;
 use App\Models\RsvpResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -28,13 +30,15 @@ class RsvpSubmissionService
             $payload['participants'],
         );
 
-        if (count(array_unique(array_map('mb_strtolower', $names))) !== count($names)) {
+        $normalizedNames = array_map($this->normalizeName(...), $names);
+
+        if (count(array_unique($normalizedNames)) !== count($normalizedNames)) {
             throw ValidationException::withMessages([
                 'participants' => 'Each participant name must be unique in this response.',
             ]);
         }
 
-        return DB::transaction(function () use ($request, $rsvpLink, $payload, $names): array {
+        return DB::transaction(function () use ($request, $rsvpLink, $payload, $names, $normalizedNames): array {
             $lockedLink = RsvpLink::query()->whereKey($rsvpLink->getKey())->lockForUpdate()->firstOrFail();
 
             $existing = RsvpResponse::query()
@@ -45,8 +49,9 @@ class RsvpSubmissionService
 
             if ($existing) {
                 $existingNames = $existing->participants->pluck('full_name')->all();
+                $normalizedExistingNames = array_map($this->normalizeName(...), $existingNames);
 
-                if ($existing->will_attend !== $payload['will_attend'] || $existingNames !== $names) {
+                if ($existing->will_attend !== $payload['will_attend'] || $normalizedExistingNames !== $normalizedNames) {
                     throw new ConflictHttpException('This submission key was already used for a different RSVP response.');
                 }
 
@@ -55,6 +60,17 @@ class RsvpSubmissionService
 
             if (! $lockedLink->isAvailable()) {
                 throw new HttpException(410, 'This RSVP link is no longer accepting responses.');
+            }
+
+            $registeredNames = RsvpParticipant::query()
+                ->whereHas('response', fn ($query) => $query->where('rsvp_link_id', $lockedLink->getKey()))
+                ->pluck('full_name')
+                ->map(fn (string $name): string => $this->normalizeName($name));
+
+            if ($registeredNames->intersect($normalizedNames)->isNotEmpty()) {
+                throw ValidationException::withMessages([
+                    'participants' => 'One or more participant names are already registered for this invitation.',
+                ]);
             }
 
             $response = RsvpResponse::query()->create([
@@ -77,5 +93,10 @@ class RsvpSubmissionService
 
             return ['response' => $response, 'replayed' => false];
         }, attempts: 3);
+    }
+
+    private function normalizeName(string $name): string
+    {
+        return Str::lower(preg_replace('/\s+/u', ' ', trim($name)) ?? trim($name));
     }
 }

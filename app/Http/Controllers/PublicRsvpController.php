@@ -15,6 +15,10 @@ class PublicRsvpController extends Controller
         return view('rsvp', [
             'rsvpLink' => [
                 'title' => $rsvpLink->title,
+                'event_date' => $rsvpLink->event_date?->format('Y-m-d'),
+                'event_time' => $rsvpLink->event_time,
+                'venue' => $rsvpLink->venue,
+                'venue_map_url' => $rsvpLink->venue_map_url,
                 'expires_at' => $rsvpLink->expires_at->toIso8601String(),
                 'status' => $rsvpLink->status(),
                 'is_available' => $rsvpLink->isAvailable(),

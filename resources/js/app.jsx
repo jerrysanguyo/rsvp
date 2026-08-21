@@ -6,11 +6,13 @@ import { store as storeRequest } from './lib/http';
 
 const Sparkle = ({ className = '' }) => <span className={`sparkle ${className}`} aria-hidden="true">✦</span>;
 
-const eventDetails = {
-    date: 'December 27, 2026',
-    time: '7:00–9:00 PM',
-    venue: 'Jollibee Global City',
-};
+function formatEventDate(value) {
+    if (!value) return 'Date to be announced';
+
+    return new Intl.DateTimeFormat('en-PH', {
+        month: 'long', day: 'numeric', year: 'numeric',
+    }).format(new Date(`${value}T00:00:00`));
+}
 
 const GuestIcon = () => (
     <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -31,6 +33,12 @@ function formatExpiration(value) {
 }
 
 function RsvpForm({ rsvpLink }) {
+    const eventDetails = {
+        date: formatEventDate(rsvpLink?.event_date),
+        time: rsvpLink?.event_time ?? 'Time to be announced',
+        venue: rsvpLink?.venue ?? 'Venue to be announced',
+        mapUrl: rsvpLink?.venue_map_url,
+    };
     const [attending, setAttending] = useState('yes');
     const [guests, setGuests] = useState(['']);
     const [submitted, setSubmitted] = useState(false);
@@ -97,8 +105,17 @@ function RsvpForm({ rsvpLink }) {
                         <dl>
                             <div><dt>Date</dt><dd>{eventDetails.date}</dd></div>
                             <div><dt>Time</dt><dd>{eventDetails.time}</dd></div>
-                            <div><dt>Venue</dt><dd>{eventDetails.venue}</dd></div>
+                            <div><dt>Venue</dt><dd>{eventDetails.mapUrl ? <a href={eventDetails.mapUrl} target="_blank" rel="noreferrer">{eventDetails.venue} <span aria-hidden="true">↗</span></a> : eventDetails.venue}</dd></div>
                         </dl>
+                    </section>
+                )}
+                {attending === 'no' && (
+                    <section className="change-mind-note" aria-labelledby="change-mind-title">
+                        <span className="change-mind-note__crown" aria-hidden="true">♛</span>
+                        <div>
+                            <h3 id="change-mind-title">The castle doors remain open</h3>
+                            <p>If your plans change and you wish to join Gaia’s magical celebration, kindly message <strong>Marianne Abuan</strong> on <strong>Messenger</strong>.</p>
+                        </div>
                     </section>
                 )}
             </div>
@@ -153,6 +170,7 @@ function RsvpForm({ rsvpLink }) {
                         </div>
                     ))}
                 </div>
+                {errors.participants && <p className="guest-field-error guest-field-error--group">{errors.participants[0]}</p>}
 
                 {attending === 'yes' && guests.length < 8 && (
                     <button className="add-guest" type="button" onClick={addGuest}><span>＋</span> Add another guest</button>
@@ -237,11 +255,11 @@ function App({ rsvpLink }) {
                     <div className="mobile-event-details">
                         <div>
                             <span className="event-detail-icon" aria-hidden="true">◷</span>
-                            <span><small>Date &amp; time</small><strong>Dec 27 · 7:00–9:00 PM</strong></span>
+                            <span><small>Date &amp; time</small><strong>{formatEventDate(rsvpLink?.event_date)} · {rsvpLink?.event_time ?? 'TBA'}</strong></span>
                         </div>
                         <div>
                             <span className="event-detail-icon" aria-hidden="true">⌖</span>
-                            <span><small>Celebration venue</small><strong>Jollibee Global City</strong></span>
+                            <span><small>Celebration venue</small><strong>{rsvpLink?.venue ?? 'Venue to be announced'}</strong></span>
                         </div>
                     </div>
                 </div>

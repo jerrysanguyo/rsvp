@@ -4,7 +4,7 @@
     "name": "http"
   },
   "resources/css/app.css": {
-    "file": "assets/app-WqHMI2vW.css",
+    "file": "assets/app-BDa7Abib.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -13,7 +13,7 @@
     ]
   },
   "resources/js/admin.jsx": {
-    "file": "assets/admin-BD7CwQNL.js",
+    "file": "assets/admin-B1X0FWRv.js",
     "name": "admin",
     "src": "resources/js/admin.jsx",
     "isEntry": true,
@@ -22,7 +22,7 @@
     ]
   },
   "resources/js/app.jsx": {
-    "file": "assets/app-CzLH3MV0.js",
+    "file": "assets/app-DQtMJsk_.js",
     "name": "app",
     "src": "resources/js/app.jsx",
     "isEntry": true,

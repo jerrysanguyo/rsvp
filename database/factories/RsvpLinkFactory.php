@@ -17,6 +17,10 @@ class RsvpLinkFactory extends Factory
         return [
             'created_by' => User::factory(),
             'title' => fake()->sentence(3),
+            'event_date' => now()->addMonth()->toDateString(),
+            'event_time' => '7:00–9:00 PM',
+            'venue' => 'Jollibee Global City',
+            'venue_map_url' => 'https://maps.google.com/?q=Jollibee+Global+City',
             'expires_at' => now()->addWeek(),
             'is_active' => true,
         ];

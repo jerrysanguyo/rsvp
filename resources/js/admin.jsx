@@ -1,5 +1,5 @@
 import './bootstrap';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import Alert from './components/ui/Alert';
 import BrandMark from './components/ui/BrandMark';
@@ -143,15 +143,38 @@ function LoginPage({ loginUrl, flash = {} }) {
     );
 }
 
-function RsvpLinkFormModal({ open, storeUrl, onClose, onCreated }) {
-    const [values, setValues] = useState({ title: '', expires_at: '', is_active: true });
+const emptyLinkValues = { title: '', event_date: '', event_time: '', venue: '', venue_map_url: '', expires_at: '', is_active: true };
+const toLocalDateTime = (value) => {
+    if (!value) return '';
+    const date = new Date(value);
+    return new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+};
+
+function RsvpLinkFormModal({ open, storeUrl, link, onClose, onSaved }) {
+    const [values, setValues] = useState(emptyLinkValues);
     const [errors, setErrors] = useState({});
     const [alert, setAlert] = useState(null);
     const [submitting, setSubmitting] = useState(false);
 
+    useEffect(() => {
+        if (!open) return;
+
+        setValues(link ? {
+            title: link.title ?? '',
+            event_date: link.event_date ?? '',
+            event_time: link.event_time ?? '',
+            venue: link.venue ?? '',
+            venue_map_url: link.venue_map_url ?? '',
+            expires_at: toLocalDateTime(link.expires_at),
+            is_active: link.is_active,
+        } : emptyLinkValues);
+        setErrors({});
+        setAlert(null);
+    }, [link, open]);
+
     const resetAndClose = () => {
         if (submitting) return;
-        setValues({ title: '', expires_at: '', is_active: true });
+        setValues(emptyLinkValues);
         setErrors({});
         setAlert(null);
         onClose();
@@ -166,6 +189,10 @@ function RsvpLinkFormModal({ open, storeUrl, onClose, onCreated }) {
     const validate = () => {
         const nextErrors = {};
         if (!values.title.trim()) nextErrors.title = 'Link name is required.';
+        if (!values.event_date) nextErrors.event_date = 'Event date is required.';
+        if (!values.event_time.trim()) nextErrors.event_time = 'Event time is required.';
+        if (!values.venue.trim()) nextErrors.venue = 'Venue is required.';
+        if (values.venue_map_url && !/^https:\/\/(?:[^/]+\.)?google\.com\/|^https:\/\/(?:maps\.app\.goo\.gl|goo\.gl)\//i.test(values.venue_map_url)) nextErrors.venue_map_url = 'Enter a valid HTTPS Google Maps link.';
         if (!values.expires_at) nextErrors.expires_at = 'Expiration date and time are required.';
         else if (new Date(values.expires_at).getTime() <= Date.now()) nextErrors.expires_at = 'Expiration must be in the future.';
         setErrors(nextErrors);
@@ -179,13 +206,20 @@ function RsvpLinkFormModal({ open, storeUrl, onClose, onCreated }) {
 
         setSubmitting(true);
         try {
-            const response = await storeRequest(storeUrl, {
+            const payload = {
                 title: values.title.trim(),
+                event_date: values.event_date,
+                event_time: values.event_time.trim(),
+                venue: values.venue.trim(),
+                venue_map_url: values.venue_map_url.trim() || null,
                 expires_at: new Date(values.expires_at).toISOString(),
                 is_active: values.is_active,
-            });
-            onCreated(response.data.data, response.data.message);
-            setValues({ title: '', expires_at: '', is_active: true });
+            };
+            const response = link
+                ? await updateRequest(link.update_url, payload, { method: 'patch' })
+                : await storeRequest(storeUrl, payload);
+            onSaved(response.data.data, response.data.message, Boolean(link));
+            setValues(emptyLinkValues);
             setErrors({});
             onClose();
         } catch (error) {
@@ -198,7 +232,7 @@ function RsvpLinkFormModal({ open, storeUrl, onClose, onCreated }) {
     };
 
     return (
-        <Modal open={open} title="Create an RSVP link" description="Generate a secure public link for the Fairytale Land RSVP form." onClose={resetAndClose}>
+        <Modal open={open} title={link ? 'Edit RSVP event' : 'Create an RSVP link'} description="Manage the public invitation and its event details." onClose={resetAndClose}>
             <form className="rsvp-link-form" onSubmit={submit} noValidate>
                 {alert && <Alert variant={alert.variant} message={alert.message} onDismiss={() => setAlert(null)} />}
                 <TextInput
@@ -211,6 +245,53 @@ function RsvpLinkFormModal({ open, storeUrl, onClose, onCreated }) {
                     onChange={updateValue}
                     placeholder="e.g. Gaia’s 3rd Birthday"
                     maxLength={120}
+                    disabled={submitting}
+                />
+                <TextInput
+                    id="rsvp-link-event-date"
+                    name="event_date"
+                    type="date"
+                    label="Event date"
+                    value={values.event_date}
+                    error={errors.event_date}
+                    onChange={updateValue}
+                    disabled={submitting}
+                />
+                <TextInput
+                    id="rsvp-link-event-time"
+                    name="event_time"
+                    type="text"
+                    label="Event time"
+                    value={values.event_time}
+                    error={errors.event_time}
+                    onChange={updateValue}
+                    placeholder="e.g. 7:00–9:00 PM"
+                    maxLength={80}
+                    disabled={submitting}
+                />
+                <TextInput
+                    id="rsvp-link-venue"
+                    name="venue"
+                    type="text"
+                    label="Venue"
+                    value={values.venue}
+                    error={errors.venue}
+                    onChange={updateValue}
+                    placeholder="e.g. Jollibee Global City"
+                    maxLength={160}
+                    disabled={submitting}
+                />
+                <TextInput
+                    id="rsvp-link-map-url"
+                    name="venue_map_url"
+                    type="url"
+                    label="Google Maps link (optional)"
+                    value={values.venue_map_url}
+                    error={errors.venue_map_url}
+                    hint="Use the Share link from Google Maps."
+                    onChange={updateValue}
+                    placeholder="https://maps.app.goo.gl/..."
+                    maxLength={2048}
                     disabled={submitting}
                 />
                 <TextInput
@@ -234,7 +315,7 @@ function RsvpLinkFormModal({ open, storeUrl, onClose, onCreated }) {
                 />
                 <div className="ui-modal__actions">
                     <Button type="button" variant="secondary" onClick={resetAndClose} disabled={submitting}>Cancel</Button>
-                    <Button type="submit" loading={submitting}>Create secure link</Button>
+                    <Button type="submit" loading={submitting}>{link ? 'Save event details' : 'Create secure link'}</Button>
                 </div>
             </form>
         </Modal>
@@ -256,17 +337,36 @@ function DeleteRsvpLinkModal({ link, submitting, onClose, onConfirm }) {
     );
 }
 
+function DeleteParticipantModal({ participant, submitting, onClose, onConfirm }) {
+    return (
+        <Modal open={Boolean(participant)} title="Remove participant?" description="Use this to clean up duplicate or incorrect entries." onClose={() => !submitting && onClose()} size="small">
+            <div className="delete-link-confirmation">
+                <div className="delete-link-confirmation__icon" aria-hidden="true">!</div>
+                <p><strong>{participant?.name}</strong> will be permanently removed from this invitation’s participant list. This action is recorded in the audit log.</p>
+            </div>
+            <div className="ui-modal__actions">
+                <Button type="button" variant="secondary" onClick={onClose} disabled={submitting}>Keep participant</Button>
+                <Button type="button" variant="danger" loading={submitting} onClick={onConfirm}>Remove participant</Button>
+            </div>
+        </Modal>
+    );
+}
+
 const formatAdminDate = (value) => new Intl.DateTimeFormat('en-PH', {
     month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit',
 }).format(new Date(value));
 
-function DashboardPage({ user, logoutUrl, rsvpLinks: initialRsvpLinks = [], rsvpLinkStoreUrl, participants = [] }) {
+function DashboardPage({ user, logoutUrl, rsvpLinks: initialRsvpLinks = [], rsvpLinkStoreUrl, participants: initialParticipants = [] }) {
     const [submitting, setSubmitting] = useState(false);
     const [alert, setAlert] = useState(null);
     const [rsvpLinks, setRsvpLinks] = useState(initialRsvpLinks);
     const [createLinkOpen, setCreateLinkOpen] = useState(false);
+    const [editLinkTarget, setEditLinkTarget] = useState(null);
     const [deleteTarget, setDeleteTarget] = useState(null);
     const [linkBusy, setLinkBusy] = useState(null);
+    const [participants, setParticipants] = useState(initialParticipants);
+    const [participantDeleteTarget, setParticipantDeleteTarget] = useState(null);
+    const [participantBusy, setParticipantBusy] = useState(false);
 
     const logout = async () => {
         setSubmitting(true);
@@ -280,9 +380,13 @@ function DashboardPage({ user, logoutUrl, rsvpLinks: initialRsvpLinks = [], rsvp
         }
     };
 
-    const linkCreated = (link, message) => {
-        setRsvpLinks((current) => [link, ...current]);
+    const linkSaved = (link, message, editing) => {
+        setRsvpLinks((current) => editing
+            ? current.map((item) => (item.id === link.id ? link : item))
+            : [link, ...current]);
         setAlert({ variant: 'success', message });
+        setCreateLinkOpen(false);
+        setEditLinkTarget(null);
     };
 
     const copyPublicLink = async (link) => {
@@ -324,6 +428,24 @@ function DashboardPage({ user, logoutUrl, rsvpLinks: initialRsvpLinks = [], rsvp
         }
     };
 
+    const removeParticipant = async () => {
+        if (!participantDeleteTarget) return;
+
+        setParticipantBusy(true);
+        setAlert(null);
+
+        try {
+            const response = await destroyRequest(participantDeleteTarget.destroy_url);
+            setParticipants((current) => current.filter((participant) => participant.id !== participantDeleteTarget.id));
+            setAlert({ variant: 'success', message: response.data.message });
+            setParticipantDeleteTarget(null);
+        } catch (error) {
+            setAlert({ variant: 'error', message: error.message });
+        } finally {
+            setParticipantBusy(false);
+        }
+    };
+
     const attendingCount = participants.filter((participant) => participant.attendance === 'attending').length;
     const declinedCount = participants.length - attendingCount;
     const attendanceRate = participants.length > 0 ? Math.round((attendingCount / participants.length) * 100) : 0;
@@ -356,7 +478,7 @@ function DashboardPage({ user, logoutUrl, rsvpLinks: initialRsvpLinks = [], rsvp
             sortable: false,
             className: 'data-table__actions',
             render: (participant) => (
-                <button type="button" onClick={() => setAlert({ variant: 'info', message: `Detailed response information for ${participant.name} will be available once participant submissions are connected.` })}>View</button>
+                <button type="button" onClick={() => setParticipantDeleteTarget(participant)}>Remove</button>
             ),
         },
     ];
@@ -406,10 +528,16 @@ function DashboardPage({ user, logoutUrl, rsvpLinks: initialRsvpLinks = [], rsvp
                                         </StatusBadge>
                                     </div>
                                     <h3>{link.title}</h3>
+                                    <div className="rsvp-link-card__event">
+                                        <small>Event details</small>
+                                        <strong>{link.event_date} · {link.event_time}</strong>
+                                        <span>{link.venue}</span>
+                                    </div>
                                     <button className="rsvp-link-card__url" type="button" onClick={() => copyPublicLink(link)} title="Copy public URL">{link.public_url}</button>
                                     <div className="rsvp-link-card__expiry"><span aria-hidden="true">◷</span><span><small>Expires</small><strong>{formatAdminDate(link.expires_at)}</strong></span></div>
                                     <div className="rsvp-link-card__actions">
                                         <a href={link.public_url} target="_blank" rel="noreferrer">Open form ↗</a>
+                                        <button type="button" onClick={() => setEditLinkTarget(link)}>Edit event</button>
                                         <button type="button" onClick={() => copyPublicLink(link)}>Copy</button>
                                         <button type="button" onClick={() => toggleLink(link)} disabled={linkBusy === link.id}>{linkBusy === link.id ? 'Saving…' : link.is_active ? 'Deactivate' : 'Activate'}</button>
                                         <button className="is-danger" type="button" onClick={() => setDeleteTarget(link)} disabled={linkBusy === link.id}>Remove</button>
@@ -449,8 +577,15 @@ function DashboardPage({ user, logoutUrl, rsvpLinks: initialRsvpLinks = [], rsvp
                     />
                 </section>
             </section>
-            <RsvpLinkFormModal open={createLinkOpen} storeUrl={rsvpLinkStoreUrl} onClose={() => setCreateLinkOpen(false)} onCreated={linkCreated} />
+            <RsvpLinkFormModal
+                open={createLinkOpen || Boolean(editLinkTarget)}
+                storeUrl={rsvpLinkStoreUrl}
+                link={editLinkTarget}
+                onClose={() => { setCreateLinkOpen(false); setEditLinkTarget(null); }}
+                onSaved={linkSaved}
+            />
             <DeleteRsvpLinkModal link={deleteTarget} submitting={linkBusy === deleteTarget?.id} onClose={() => setDeleteTarget(null)} onConfirm={removeLink} />
+            <DeleteParticipantModal participant={participantDeleteTarget} submitting={participantBusy} onClose={() => setParticipantDeleteTarget(null)} onConfirm={removeParticipant} />
         </main>
     );
 }

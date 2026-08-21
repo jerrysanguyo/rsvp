@@ -16,6 +16,10 @@ class RsvpLink extends Model
 
     protected $fillable = [
         'title',
+        'event_date',
+        'event_time',
+        'venue',
+        'venue_map_url',
         'expires_at',
         'is_active',
         'created_by',
@@ -24,6 +28,7 @@ class RsvpLink extends Model
     protected function casts(): array
     {
         return [
+            'event_date' => 'immutable_date',
             'expires_at' => 'immutable_datetime',
             'is_active' => 'boolean',
         ];

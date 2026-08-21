@@ -20,6 +20,7 @@ class RsvpLinkManagementTest extends TestCase
             ->withHeader('X-Idempotency-Key', (string) Str::uuid())
             ->postJson(route('admin.rsvp-links.store'), [
                 'title' => 'Gaia’s 3rd Birthday',
+                ...$this->eventDetails(),
                 'expires_at' => now()->addWeek()->toIso8601String(),
                 'is_active' => true,
             ]);
@@ -48,6 +49,7 @@ class RsvpLinkManagementTest extends TestCase
             ->withHeader('X-Idempotency-Key', (string) Str::uuid())
             ->postJson(route('admin.rsvp-links.store'), [
                 'title' => "  <script>alert('xss')</script>Gaia's <b>Royal</b> Party\u{0000}  ",
+                ...$this->eventDetails(),
                 'expires_at' => now()->addWeek()->toIso8601String(),
                 'is_active' => true,
                 'created_by' => $otherAdmin->id,
@@ -71,6 +73,7 @@ class RsvpLinkManagementTest extends TestCase
             ->withHeader('X-Idempotency-Key', (string) Str::uuid())
             ->postJson(route('admin.rsvp-links.store'), [
                 'title' => '<script>alert(1)</script>',
+                ...$this->eventDetails(),
                 'expires_at' => now()->addWeek()->toIso8601String(),
                 'is_active' => true,
             ])
@@ -88,6 +91,7 @@ class RsvpLinkManagementTest extends TestCase
             ->withHeader('X-Idempotency-Key', (string) Str::uuid())
             ->postJson(route('admin.rsvp-links.store'), [
                 'title' => 'Expired invitation',
+                ...$this->eventDetails(),
                 'expires_at' => now()->subMinute()->toIso8601String(),
                 'is_active' => true,
             ])
@@ -105,6 +109,7 @@ class RsvpLinkManagementTest extends TestCase
             ->withHeader('X-Idempotency-Key', (string) Str::uuid())
             ->postJson(route('admin.rsvp-links.store'), [
                 'title' => 'Blocked invitation',
+                ...$this->eventDetails(),
                 'expires_at' => now()->addWeek()->toIso8601String(),
                 'is_active' => true,
             ])
@@ -124,6 +129,48 @@ class RsvpLinkManagementTest extends TestCase
             ->assertJsonPath('data.status', 'inactive');
 
         $this->assertFalse($link->refresh()->is_active);
+    }
+
+    public function test_admin_can_update_event_details_for_an_existing_link(): void
+    {
+        $admin = User::factory()->create(['is_active' => true]);
+        $link = RsvpLink::factory()->for($admin, 'creator')->create();
+
+        $this->actingAs($admin)
+            ->patchJson(route('admin.rsvp-links.update', $link), [
+                'event_date' => '2027-01-10',
+                'event_time' => '3:00-5:00 PM',
+                'venue' => 'Jollibee BGC Triangle Drive',
+                'venue_map_url' => 'https://maps.app.goo.gl/abc123',
+            ])
+            ->assertOk()
+            ->assertJsonPath('data.event_date', '2027-01-10')
+            ->assertJsonPath('data.event_time', '3:00-5:00 PM')
+            ->assertJsonPath('data.venue', 'Jollibee BGC Triangle Drive')
+            ->assertJsonPath('data.venue_map_url', 'https://maps.app.goo.gl/abc123');
+
+        $this->assertSame('2027-01-10', $link->refresh()->event_date->toDateString());
+        $this->assertDatabaseHas('rsvp_links', [
+            'id' => $link->id,
+            'event_time' => '3:00-5:00 PM',
+            'venue' => 'Jollibee BGC Triangle Drive',
+            'venue_map_url' => 'https://maps.app.goo.gl/abc123',
+        ]);
+    }
+
+    public function test_event_details_reject_an_unsafe_or_non_google_maps_link(): void
+    {
+        $admin = User::factory()->create(['is_active' => true]);
+        $link = RsvpLink::factory()->for($admin, 'creator')->create();
+
+        $this->actingAs($admin)
+            ->patchJson(route('admin.rsvp-links.update', $link), [
+                'venue_map_url' => 'http://example.com/fake-map',
+            ])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('venue_map_url');
+
+        $this->assertNotSame('http://example.com/fake-map', $link->refresh()->venue_map_url);
     }
 
     public function test_admin_can_soft_delete_a_link(): void
@@ -178,5 +225,16 @@ class RsvpLinkManagementTest extends TestCase
         $link = RsvpLink::factory()->create();
 
         $this->get('/rsvp/'.$link->id)->assertNotFound();
+    }
+
+    /** @return array<string, string> */
+    private function eventDetails(): array
+    {
+        return [
+            'event_date' => now()->addMonth()->toDateString(),
+            'event_time' => '7:00–9:00 PM',
+            'venue' => 'Jollibee Global City',
+            'venue_map_url' => 'https://maps.google.com/?q=Jollibee',
+        ];
     }
 }

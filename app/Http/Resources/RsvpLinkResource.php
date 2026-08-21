@@ -13,6 +13,10 @@ class RsvpLinkResource extends JsonResource
         return [
             'id' => $this->id,
             'title' => $this->title,
+            'event_date' => $this->event_date?->format('Y-m-d'),
+            'event_time' => $this->event_time,
+            'venue' => $this->venue,
+            'venue_map_url' => $this->venue_map_url,
             'expires_at' => $this->expires_at->toIso8601String(),
             'expires_label' => $this->expires_at->format('M j, Y · g:i A'),
             'is_active' => $this->is_active,

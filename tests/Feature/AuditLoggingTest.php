@@ -100,6 +100,10 @@ class AuditLoggingTest extends TestCase
             ->withHeader('X-Idempotency-Key', (string) Str::uuid())
             ->postJson(route('admin.rsvp-links.store'), [
                 'title' => 'Audited invitation',
+                'event_date' => now()->addMonth()->toDateString(),
+                'event_time' => '7:00–9:00 PM',
+                'venue' => 'Jollibee Global City',
+                'venue_map_url' => 'https://maps.google.com/?q=Jollibee',
                 'expires_at' => now()->addWeek()->toIso8601String(),
                 'is_active' => true,
             ])
@@ -127,6 +131,9 @@ class AuditLoggingTest extends TestCase
             ->withHeader('X-Idempotency-Key', (string) Str::uuid())
             ->postJson(route('admin.rsvp-links.store'), [
                 'title' => 'Invalid invitation',
+                'event_date' => now()->addMonth()->toDateString(),
+                'event_time' => '7:00–9:00 PM',
+                'venue' => 'Jollibee Global City',
                 'expires_at' => now()->subDay()->toIso8601String(),
                 'is_active' => true,
                 'password' => 'must-never-be-logged',
