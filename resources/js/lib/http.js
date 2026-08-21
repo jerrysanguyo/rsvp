@@ -68,7 +68,7 @@ async function mutate(method, url, payload = {}, options = {}) {
     const headers = {
         ...options.headers,
         'X-Request-ID': requestId,
-        ...(method === 'post' ? { 'X-Idempotency-Key': requestIdentifier() } : {}),
+        ...(method === 'post' ? { 'X-Idempotency-Key': options.idempotencyKey ?? requestIdentifier() } : {}),
     };
 
     try {

@@ -5,13 +5,16 @@ namespace App\Services;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\ValidationException;
 use InvalidArgumentException;
 use RuntimeException;
+use Throwable;
 
 class CrudService
 {
-    public function __construct(private readonly AuditLogService $auditLog) {}
+    public function __construct(
+        private readonly AuditLogService $auditLog,
+        private readonly PlainTextSanitizer $sanitizer,
+    ) {}
 
     /**
      * Persist a new model using validated, explicitly fillable attributes.
@@ -24,16 +27,32 @@ class CrudService
         array $attributes,
         string $auditDescription,
     ): Model {
-        $attributes = $this->prepareAttributes($record, $attributes);
+        $attemptedFields = array_keys($attributes);
+        $preparedAttributes = null;
 
-        return DB::transaction(function () use ($request, $record, $attributes, $auditDescription): Model {
-            $record->fill($attributes);
-            $record->saveOrFail();
+        try {
+            $preparedAttributes = $this->prepareAttributes($record, $attributes);
 
-            $this->auditLog->created($request, $record, $auditDescription, mustPersist: true);
+            return DB::transaction(function () use ($request, $record, $preparedAttributes, $auditDescription): Model {
+                $record->fill($preparedAttributes);
+                $record->saveOrFail();
 
-            return $record->refresh();
-        }, attempts: 3);
+                $this->auditLog->created($request, $record, $auditDescription, mustPersist: true);
+
+                return $record->refresh();
+            }, attempts: 3);
+        } catch (Throwable $exception) {
+            $this->auditLog->mutationFailed(
+                $request,
+                'create',
+                $record::class,
+                $exception,
+                attemptedChanges: $preparedAttributes,
+                attemptedFields: $attemptedFields,
+            );
+
+            throw $exception;
+        }
     }
 
     /**
@@ -47,28 +66,47 @@ class CrudService
         array $attributes,
         string $auditDescription,
     ): Model {
-        $attributes = $this->prepareAttributes($record, $attributes);
+        $attemptedFields = array_keys($attributes);
+        $preparedAttributes = null;
+        $before = $record->attributesToArray();
 
-        return DB::transaction(function () use ($request, $record, $attributes, $auditDescription): Model {
-            $lockedRecord = $this->lockRecord($record);
-            $before = $lockedRecord->attributesToArray();
+        try {
+            $preparedAttributes = $this->prepareAttributes($record, $attributes);
 
-            $lockedRecord->fill($attributes);
+            return DB::transaction(function () use ($request, $record, $preparedAttributes, $auditDescription): Model {
+                $lockedRecord = $this->lockRecord($record);
+                $lockedBefore = $lockedRecord->attributesToArray();
 
-            if ($lockedRecord->isDirty()) {
-                $lockedRecord->saveOrFail();
-            }
+                $lockedRecord->fill($preparedAttributes);
 
-            $this->auditLog->updated(
+                if ($lockedRecord->isDirty()) {
+                    $lockedRecord->saveOrFail();
+                }
+
+                $this->auditLog->updated(
+                    $request,
+                    $lockedRecord,
+                    $lockedBefore,
+                    $auditDescription,
+                    mustPersist: true,
+                );
+
+                return $lockedRecord->refresh();
+            }, attempts: 3);
+        } catch (Throwable $exception) {
+            $this->auditLog->mutationFailed(
                 $request,
-                $lockedRecord,
+                'update',
+                $record::class,
+                $exception,
+                $record,
                 $before,
-                $auditDescription,
-                mustPersist: true,
+                $preparedAttributes,
+                $attemptedFields,
             );
 
-            return $lockedRecord->refresh();
-        }, attempts: 3);
+            throw $exception;
+        }
     }
 
     /**
@@ -76,22 +114,37 @@ class CrudService
      */
     public function destroy(Request $request, Model $record, string $auditDescription): void
     {
-        DB::transaction(function () use ($request, $record, $auditDescription): void {
-            $lockedRecord = $this->lockRecord($record);
-            $before = $lockedRecord->attributesToArray();
+        $before = $record->attributesToArray();
 
-            if ($lockedRecord->delete() === false) {
-                throw new RuntimeException('The record could not be deleted.');
-            }
+        try {
+            DB::transaction(function () use ($request, $record, $auditDescription): void {
+                $lockedRecord = $this->lockRecord($record);
+                $lockedBefore = $lockedRecord->attributesToArray();
 
-            $this->auditLog->deleted(
+                if ($lockedRecord->delete() === false) {
+                    throw new RuntimeException('The record could not be deleted.');
+                }
+
+                $this->auditLog->deleted(
+                    $request,
+                    $lockedRecord,
+                    $auditDescription,
+                    $lockedBefore,
+                    mustPersist: true,
+                );
+            }, attempts: 3);
+        } catch (Throwable $exception) {
+            $this->auditLog->mutationFailed(
                 $request,
-                $lockedRecord,
-                $auditDescription,
+                'delete',
+                $record::class,
+                $exception,
+                $record,
                 $before,
-                mustPersist: true,
             );
-        }, attempts: 3);
+
+            throw $exception;
+        }
     }
 
     /** @param array<string, mixed> $attributes
@@ -110,7 +163,7 @@ class CrudService
             ));
         }
 
-        return $this->sanitize($attributes);
+        return $this->sanitizer->sanitizeArray($attributes);
     }
 
     private function lockRecord(Model $record): Model
@@ -123,49 +176,5 @@ class CrudService
             ->whereKey($record->getKey())
             ->lockForUpdate()
             ->firstOrFail();
-    }
-
-    /** @param array<string, mixed> $values
-     * @return array<string, mixed>
-     */
-    private function sanitize(array $values): array
-    {
-        foreach ($values as $key => $value) {
-            if (is_array($value)) {
-                $values[$key] = $this->sanitize($value);
-
-                continue;
-            }
-
-            if (! is_string($value)) {
-                continue;
-            }
-
-            if (! mb_check_encoding($value, 'UTF-8')) {
-                throw new InvalidArgumentException(sprintf('%s must contain valid UTF-8 text.', $key));
-            }
-
-            $originalValue = $value;
-            $value = preg_replace('#<(script|style)\b[^>]*>.*?</\1>#is', '', $value) ?? '';
-            $value = strip_tags($value);
-            $value = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u', '', $value) ?? '';
-            $value = str_replace(["\r\n", "\r"], "\n", $value);
-
-            if (class_exists(\Normalizer::class)) {
-                $value = \Normalizer::normalize($value, \Normalizer::FORM_C) ?: $value;
-            }
-
-            $value = trim($value);
-
-            if ($value === '' && trim($originalValue) !== '') {
-                throw ValidationException::withMessages([
-                    $key => 'This field must contain valid plain text.',
-                ]);
-            }
-
-            $values[$key] = $value;
-        }
-
-        return $values;
     }
 }

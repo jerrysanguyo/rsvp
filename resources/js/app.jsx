@@ -1,8 +1,16 @@
 import './bootstrap';
 import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
+import Alert from './components/ui/Alert';
+import { store as storeRequest } from './lib/http';
 
 const Sparkle = ({ className = '' }) => <span className={`sparkle ${className}`} aria-hidden="true">✦</span>;
+
+const eventDetails = {
+    date: 'December 27, 2026',
+    time: '7:00–9:00 PM',
+    venue: 'Jollibee Global City',
+};
 
 const GuestIcon = () => (
     <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -26,6 +34,11 @@ function RsvpForm({ rsvpLink }) {
     const [attending, setAttending] = useState('yes');
     const [guests, setGuests] = useState(['']);
     const [submitted, setSubmitted] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
+    const [alert, setAlert] = useState(null);
+    const [errors, setErrors] = useState({});
+    const [receipt, setReceipt] = useState(null);
+    const [submissionKey] = useState(() => window.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(16).slice(2)}`);
 
     const addGuest = () => setGuests((current) => [...current, '']);
     const removeGuest = (index) => setGuests((current) => current.filter((_, i) => i !== index));
@@ -36,14 +49,30 @@ function RsvpForm({ rsvpLink }) {
         if (value === 'no') setGuests((current) => [current[0] ?? '']);
     };
 
-    const submitPreview = (event) => {
+    const submitRsvp = async (event) => {
         event.preventDefault();
-        if (!guests[0].trim()) return;
-        setSubmitted(true);
+        setAlert(null);
+        setErrors({});
+        setSubmitting(true);
+
+        try {
+            const response = await storeRequest(rsvpLink.submission_url, {
+                will_attend: attending === 'yes',
+                participants: guests.map((fullName) => ({ full_name: fullName })),
+            }, { idempotencyKey: submissionKey });
+
+            setReceipt(response.data.data);
+            setSubmitted(true);
+        } catch (error) {
+            setErrors(error.errors ?? {});
+            setAlert({ variant: 'error', message: error.message ?? 'Your RSVP could not be submitted. Please try again.' });
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     if (submitted) {
-        const guestCount = guests.filter((name) => name.trim()).length;
+        const guestCount = receipt?.participant_count ?? guests.filter((name) => name.trim()).length;
         return (
             <div className="success-card" role="status">
                 <div className="success-crown">♛</div>
@@ -54,19 +83,38 @@ function RsvpForm({ rsvpLink }) {
                         ? `We saved ${guestCount} guest ${guestCount === 1 ? 'name' : 'names'} for Gaia’s celebration.`
                         : 'Gaia will miss you, but we truly appreciate your response.'}
                 </p>
-                <button className="secondary-button" type="button" onClick={() => setSubmitted(false)}>Edit my response</button>
+                <section className="receipt-guests" aria-labelledby="registered-guests-title">
+                    <h3 id="registered-guests-title">{attending === 'yes' ? 'Registered guests' : 'Response registered for'}</h3>
+                    <ul>
+                        {(receipt?.participants ?? guests.map((fullName) => ({ full_name: fullName.trim() }))).map((participant, index) => (
+                            <li key={`${participant.full_name}-${index}`}><span aria-hidden="true">✦</span>{participant.full_name}</li>
+                        ))}
+                    </ul>
+                </section>
+                {attending === 'yes' && (
+                    <section className="receipt-event" aria-labelledby="event-details-title">
+                        <h3 id="event-details-title">Event details</h3>
+                        <dl>
+                            <div><dt>Date</dt><dd>{eventDetails.date}</dd></div>
+                            <div><dt>Time</dt><dd>{eventDetails.time}</dd></div>
+                            <div><dt>Venue</dt><dd>{eventDetails.venue}</dd></div>
+                        </dl>
+                    </section>
+                )}
             </div>
         );
     }
 
     return (
-        <form className="rsvp-form" onSubmit={submitPreview}>
+        <form className="rsvp-form" onSubmit={submitRsvp} noValidate>
             <div className="form-heading">
                 <div className="mini-crown" aria-hidden="true">♛</div>
                 <p className="eyebrow">The royal invitation awaits</p>
                 <h1>Will you join the magic?</h1>
                 <p className="intro">Kindly send your response on or before {formatExpiration(rsvpLink?.expires_at)}.</p>
             </div>
+
+            {alert && <Alert variant={alert.variant} message={alert.message} onDismiss={() => setAlert(null)} className="rsvp-form__alert" />}
 
             <fieldset className="attendance-fieldset">
                 <legend>Will you be attending?</legend>
@@ -98,9 +146,10 @@ function RsvpForm({ rsvpLink }) {
                         <div className="guest-row" key={index}>
                             <label htmlFor={`guest-${index}`}>{index === 0 ? 'Full name' : `Guest ${index + 1}`}</label>
                             <div className="input-wrap">
-                                <input id={`guest-${index}`} type="text" value={guest} placeholder={index === 0 ? 'e.g. Maria Santos' : 'Enter guest’s full name'} onChange={(event) => updateGuest(index, event.target.value)} required />
+                                <input id={`guest-${index}`} type="text" value={guest} maxLength={120} aria-invalid={Boolean(errors[`participants.${index}.full_name`])} aria-describedby={errors[`participants.${index}.full_name`] ? `guest-${index}-error` : undefined} placeholder={index === 0 ? 'e.g. Maria Santos' : 'Enter guest’s full name'} onChange={(event) => updateGuest(index, event.target.value)} required />
                                 {index > 0 && <button type="button" className="remove-guest" onClick={() => removeGuest(index)} aria-label={`Remove guest ${index + 1}`}>×</button>}
                             </div>
+                            {errors[`participants.${index}.full_name`] && <p className="guest-field-error" id={`guest-${index}-error`}>{errors[`participants.${index}.full_name`][0]}</p>}
                         </div>
                     ))}
                 </div>
@@ -110,8 +159,8 @@ function RsvpForm({ rsvpLink }) {
                 )}
             </div>
 
-            <button className="submit-button" type="submit">
-                <span>{attending === 'yes' ? 'Send our royal RSVP' : 'Send my response'}</span>
+            <button className="submit-button" type="submit" disabled={submitting}>
+                <span>{submitting ? 'Sending your RSVP…' : attending === 'yes' ? 'Send our royal RSVP' : 'Send my response'}</span>
                 <span aria-hidden="true">→</span>
             </button>
             <p className="privacy-note">Your response will only be used for this celebration.</p>

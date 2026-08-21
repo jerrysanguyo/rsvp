@@ -11,15 +11,18 @@ use Throwable;
 class AuditLogService
 {
     /** @var list<string> */
-    private const SENSITIVE_KEYS = [
+    private const SENSITIVE_KEY_FRAGMENTS = [
         'password',
-        'password_confirmation',
-        'current_password',
+        'passwd',
         'remember_token',
         'token',
-        'api_token',
-        'access_token',
-        'refresh_token',
+        'secret',
+        'authorization',
+        'cookie',
+        'session_id',
+        'api_key',
+        'private_key',
+        'submission_key',
         '_token',
     ];
 
@@ -81,6 +84,50 @@ class AuditLogService
         );
     }
 
+    /**
+     * @param  array<string, mixed>|null  $before
+     * @param  array<string, mixed>|null  $attemptedChanges
+     * @param  list<string>  $attemptedFields
+     * @param  list<string>  $validationFields
+     */
+    public function mutationFailed(
+        Request $request,
+        string $action,
+        string $modelType,
+        Throwable $exception,
+        ?Model $subject = null,
+        ?array $before = null,
+        ?array $attemptedChanges = null,
+        array $attemptedFields = [],
+        array $validationFields = [],
+        string $stage = 'persistence',
+    ): void {
+        $request->attributes->set('mutation_failure_audited', true);
+
+        if ($route = $request->route()) {
+            $route->setAction([...$route->getAction(), 'mutation_failure_audited' => true]);
+        }
+
+        $this->write(
+            request: $request,
+            logName: 'records',
+            event: "record.{$action}_failed",
+            description: sprintf('%s %s failed', class_basename($modelType), $action),
+            subject: $subject?->exists ? $subject : null,
+            properties: [
+                'action' => $action,
+                'model_type' => $modelType,
+                'target_id' => $subject?->getKey(),
+                'before' => $before === null ? null : $this->redact($before),
+                'attempted_changes' => $attemptedChanges === null ? null : $this->redact($attemptedChanges),
+                'attempted_fields' => $this->safeFieldNames($attemptedFields),
+                'validation_fields' => $this->safeFieldNames($validationFields),
+                'failure_stage' => $stage,
+                'exception' => $exception::class,
+            ],
+        );
+    }
+
     /** @param array<string, mixed> $properties */
     public function authentication(
         Request $request,
@@ -104,11 +151,12 @@ class AuditLogService
     public function httpRequest(Request $request, int $statusCode, float $durationMs, ?Throwable $exception = null): void
     {
         $routeName = $request->route()?->getName();
+        $failed = $exception !== null || $statusCode >= 400;
         $description = sprintf(
             'HTTP %s %s %s',
             $request->method(),
             $routeName ?: ($request->route()?->uri() ?? $request->path()),
-            $exception ? 'failed' : 'completed',
+            $failed ? 'failed' : 'completed',
         );
 
         $properties = [
@@ -124,7 +172,7 @@ class AuditLogService
         $this->write(
             request: $request,
             logName: 'http',
-            event: $exception ? 'http.failed' : 'http.completed',
+            event: $failed ? 'http.failed' : 'http.completed',
             description: $description,
             properties: $properties,
         );
@@ -209,13 +257,33 @@ class AuditLogService
         return $changed;
     }
 
+    /** @param list<string> $fields
+     * @return list<string>
+     */
+    private function safeFieldNames(array $fields): array
+    {
+        return array_values(array_filter(array_unique($fields), function (string $field): bool {
+            $rootField = Str::lower(Str::before($field, '.'));
+
+            return ! $this->isSensitiveKey($rootField);
+        }));
+    }
+
+    private function isSensitiveKey(string $key): bool
+    {
+        $normalizedKey = Str::lower(str_replace(['-', '.'], '_', $key));
+
+        return collect(self::SENSITIVE_KEY_FRAGMENTS)
+            ->contains(fn (string $fragment): bool => str_contains($normalizedKey, $fragment));
+    }
+
     /** @param array<string, mixed> $values
      * @return array<string, mixed>
      */
     private function redact(array $values): array
     {
         foreach ($values as $key => $value) {
-            if (in_array(Str::lower((string) $key), self::SENSITIVE_KEYS, true)) {
+            if ($this->isSensitiveKey((string) $key)) {
                 unset($values[$key]);
 
                 continue;

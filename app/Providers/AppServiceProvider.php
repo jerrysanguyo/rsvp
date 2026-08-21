@@ -2,11 +2,12 @@
 
 namespace App\Providers;
 
+use App\Models\RsvpLink;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
-use Illuminate\Support\Str;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -37,6 +38,19 @@ class AppServiceProvider extends ServiceProvider
 
         RateLimiter::for('public-rsvp', function (Request $request) {
             return Limit::perMinute(120)->by('public-rsvp|'.$request->ip());
+        });
+
+        RateLimiter::for('rsvp-submit', function (Request $request) {
+            $rsvpLink = $request->route('rsvpLink');
+            $linkIdentifier = $rsvpLink instanceof RsvpLink ? $rsvpLink->getKey() : (string) $rsvpLink;
+
+            return Limit::perMinute(10)
+                ->by('rsvp-submit|'.$linkIdentifier.'|'.$request->ip())
+                ->response(function (Request $request, array $headers) {
+                    return response()->json([
+                        'message' => 'Too many RSVP attempts. Please wait before trying again.',
+                    ], 429, $headers);
+                });
         });
     }
 }

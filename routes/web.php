@@ -13,6 +13,9 @@ Route::get('/', function () {
 Route::get('rsvp/{rsvpLink}', [PublicRsvpController::class, 'show'])
     ->middleware('throttle:public-rsvp')
     ->name('rsvp.show');
+Route::post('rsvp/{rsvpLink}', [PublicRsvpController::class, 'store'])
+    ->middleware('throttle:rsvp-submit')
+    ->name('rsvp.store');
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware('guest')->group(function () {

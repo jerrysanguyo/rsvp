@@ -6,6 +6,7 @@ use App\Models\RsvpLink;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Spatie\Activitylog\Models\Activity;
 use Tests\TestCase;
 
@@ -116,5 +117,58 @@ class AuditLoggingTest extends TestCase
         $this->assertSame('Audited invitation', $deleted->properties->get('before')['title']);
         $this->assertNull($deleted->properties->get('after'));
         $this->assertArrayNotHasKey('token', $deleted->properties->get('before'));
+    }
+
+    public function test_failed_validation_creates_a_safe_create_failure_audit(): void
+    {
+        $admin = User::factory()->create(['is_active' => true]);
+
+        $this->actingAs($admin)
+            ->withHeader('X-Idempotency-Key', (string) Str::uuid())
+            ->postJson(route('admin.rsvp-links.store'), [
+                'title' => 'Invalid invitation',
+                'expires_at' => now()->subDay()->toIso8601String(),
+                'is_active' => true,
+                'password' => 'must-never-be-logged',
+                'token' => 'must-never-be-logged',
+            ])
+            ->assertUnprocessable();
+
+        $activity = Activity::query()->where('event', 'record.create_failed')->sole();
+        $properties = $activity->properties;
+
+        $this->assertSame(RsvpLink::class, $properties->get('model_type'));
+        $this->assertNull($properties->get('target_id'));
+        $this->assertNull($properties->get('attempted_changes'));
+        $this->assertSame(['expires_at'], $properties->get('validation_fields'));
+        $this->assertContains('title', $properties->get('attempted_fields'));
+        $this->assertNotContains('password', $properties->get('attempted_fields'));
+        $this->assertNotContains('token', $properties->get('attempted_fields'));
+        $this->assertSame(ValidationException::class, $properties->get('exception'));
+        $this->assertNotEmpty($properties->get('request_id'));
+        $this->assertStringNotContainsString('must-never-be-logged', $properties->toJson());
+    }
+
+    public function test_failed_update_records_target_and_safe_previous_snapshot(): void
+    {
+        $admin = User::factory()->create(['is_active' => true]);
+        $link = RsvpLink::factory()->for($admin, 'creator')->create(['title' => 'Original title']);
+
+        $this->actingAs($admin)
+            ->patchJson(route('admin.rsvp-links.update', $link), [
+                'title' => '<script>alert(1)</script>',
+            ])
+            ->assertUnprocessable();
+
+        $activity = Activity::query()->where('event', 'record.update_failed')->sole();
+        $properties = $activity->properties;
+
+        $this->assertSame($link->id, $properties->get('target_id'));
+        $this->assertSame('Original title', $properties->get('before')['title']);
+        $this->assertArrayNotHasKey('token', $properties->get('before'));
+        $this->assertNull($properties->get('attempted_changes'));
+        $this->assertSame(['title'], $properties->get('attempted_fields'));
+        $this->assertSame(ValidationException::class, $properties->get('exception'));
+        $this->assertDatabaseHas('rsvp_links', ['id' => $link->id, 'title' => 'Original title']);
     }
 }

@@ -6,6 +6,8 @@
         <meta name="theme-color" content="#f86eac">
         <meta name="robots" content="noindex, nofollow">
         <meta name="csrf-token" content="{{ csrf_token() }}">
+        <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
+        <link rel="apple-touch-icon" href="{{ asset('images/favicon.png') }}">
         <title>{{ $page === 'login' ? 'Admin Sign In' : 'RSVP Dashboard' }}</title>
         @viteReactRefresh
         @vite(['resources/css/app.css', 'resources/js/admin.jsx'])
