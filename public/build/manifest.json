@@ -1,0 +1,33 @@
+{
+  "_http-B0hisPy_.js": {
+    "file": "assets/http-B0hisPy_.js",
+    "name": "http"
+  },
+  "resources/css/app.css": {
+    "file": "assets/app-WqHMI2vW.css",
+    "src": "resources/css/app.css",
+    "isEntry": true,
+    "name": "app",
+    "names": [
+      "app.css"
+    ]
+  },
+  "resources/js/admin.jsx": {
+    "file": "assets/admin-BD7CwQNL.js",
+    "name": "admin",
+    "src": "resources/js/admin.jsx",
+    "isEntry": true,
+    "imports": [
+      "_http-B0hisPy_.js"
+    ]
+  },
+  "resources/js/app.jsx": {
+    "file": "assets/app-CzLH3MV0.js",
+    "name": "app",
+    "src": "resources/js/app.jsx",
+    "isEntry": true,
+    "imports": [
+      "_http-B0hisPy_.js"
+    ]
+  }
+}
