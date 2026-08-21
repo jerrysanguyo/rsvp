@@ -30,6 +30,22 @@ class StoreRsvpResponseRequest extends FormRequest
         ];
     }
 
+    /** @return array<string, string> */
+    public function messages(): array
+    {
+        return [
+            'participants.*.full_name.distinct' => 'The full name ":input" has been entered more than once.',
+        ];
+    }
+
+    /** @return array<string, string> */
+    public function attributes(): array
+    {
+        return [
+            'participants.*.full_name' => 'full name',
+        ];
+    }
+
     public function after(): array
     {
         return [

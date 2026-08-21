@@ -33,9 +33,7 @@ class RsvpSubmissionService
         $normalizedNames = array_map($this->normalizeName(...), $names);
 
         if (count(array_unique($normalizedNames)) !== count($normalizedNames)) {
-            throw ValidationException::withMessages([
-                'participants' => 'Each participant name must be unique in this response.',
-            ]);
+            throw ValidationException::withMessages($this->duplicateNameErrors($names, $normalizedNames));
         }
 
         return DB::transaction(function () use ($request, $rsvpLink, $payload, $names, $normalizedNames): array {
@@ -67,10 +65,20 @@ class RsvpSubmissionService
                 ->pluck('full_name')
                 ->map(fn (string $name): string => $this->normalizeName($name));
 
-            if ($registeredNames->intersect($normalizedNames)->isNotEmpty()) {
-                throw ValidationException::withMessages([
-                    'participants' => 'One or more participant names are already registered for this invitation.',
-                ]);
+            $registeredNameSet = $registeredNames->flip();
+            $registeredErrors = [];
+
+            foreach ($normalizedNames as $index => $normalizedName) {
+                if ($registeredNameSet->has($normalizedName)) {
+                    $registeredErrors["participants.{$index}.full_name"] = sprintf(
+                        'The full name "%s" is already registered for this invitation.',
+                        $names[$index],
+                    );
+                }
+            }
+
+            if ($registeredErrors !== []) {
+                throw ValidationException::withMessages($registeredErrors);
             }
 
             $response = RsvpResponse::query()->create([
@@ -98,5 +106,27 @@ class RsvpSubmissionService
     private function normalizeName(string $name): string
     {
         return Str::lower(preg_replace('/\s+/u', ' ', trim($name)) ?? trim($name));
+    }
+
+    /**
+     * @param  list<string>  $names
+     * @param  list<string>  $normalizedNames
+     * @return array<string, string>
+     */
+    private function duplicateNameErrors(array $names, array $normalizedNames): array
+    {
+        $counts = array_count_values($normalizedNames);
+        $errors = [];
+
+        foreach ($normalizedNames as $index => $normalizedName) {
+            if ($counts[$normalizedName] > 1) {
+                $errors["participants.{$index}.full_name"] = sprintf(
+                    'The full name "%s" has been entered more than once.',
+                    $names[$index],
+                );
+            }
+        }
+
+        return $errors;
     }
 }

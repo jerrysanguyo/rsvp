@@ -122,16 +122,44 @@ class PublicRsvpSubmissionTest extends TestCase
             ])
             ->assertCreated();
 
-        $this->withHeader('X-Idempotency-Key', (string) Str::uuid())
+        $response = $this->withHeader('X-Idempotency-Key', (string) Str::uuid())
             ->postJson(route('rsvp.store', $link), [
                 'will_attend' => true,
                 'participants' => [['full_name' => '  MARIA   santos  ']],
             ])
             ->assertUnprocessable()
-            ->assertJsonValidationErrors('participants');
+            ->assertJsonValidationErrors('participants.0.full_name');
+
+        $this->assertSame(
+            'The full name "MARIA   santos" is already registered for this invitation.',
+            $response->json('errors')['participants.0.full_name'][0],
+        );
 
         $this->assertDatabaseCount('rsvp_responses', 1);
         $this->assertDatabaseCount('rsvp_participants', 1);
+    }
+
+    public function test_duplicate_names_show_the_entered_name_on_the_matching_input(): void
+    {
+        $link = RsvpLink::factory()->create();
+
+        $response = $this->withHeader('X-Idempotency-Key', (string) Str::uuid())
+            ->postJson(route('rsvp.store', $link), [
+                'will_attend' => true,
+                'participants' => [
+                    ['full_name' => 'Liempo'],
+                    ['full_name' => 'liempo'],
+                ],
+            ])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('participants.0.full_name');
+
+        $this->assertSame(
+            'The full name "Liempo" has been entered more than once.',
+            $response->json('errors')['participants.0.full_name'][0],
+        );
+
+        $this->assertDatabaseCount('rsvp_responses', 0);
     }
 
     public function test_same_participant_name_can_be_used_for_a_different_link(): void
